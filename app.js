@@ -108,9 +108,9 @@ function getStatusLabel(s) {
 }
 function getAnakUrutTempat() {
   return [...guruData.anak].sort((a, b) => {
-    const ta = (a.tempatPkl||'').toLowerCase(), tb = (b.tempatPkl||'').toLowerCase();
+    const ta = String(a.tempatPkl||'').toLowerCase(), tb = String(b.tempatPkl||'').toLowerCase();
     if (ta !== tb) return ta.localeCompare(tb);
-    return (a.nama||'').localeCompare(b.nama||'');
+    return String(a.nama||'').localeCompare(String(b.nama||''));
   });
 }
 function cariAnak(id) { return guruData.anak.find(a => a.id === id); }
@@ -167,7 +167,7 @@ async function loadPublicAnakList() {
   try {
     const r = await api('getPublicAnakList');
     if (r.ok) {
-      sel.innerHTML = '<option value="">Pilih nama…</option>' + r.anak.map(a => `<option value="${a.nama.replace(/"/g,'&quot;')}">${a.nama}</option>`).join('');
+      sel.innerHTML = '<option value="">Pilih nama…</option>' + r.anak.map(a => `<option value="${String(a.nama||'').replace(/"/g,'&quot;')}">${a.nama}</option>`).join('');
     } else {
       sel.innerHTML = '<option value="">Gagal memuat</option>';
     }
@@ -290,7 +290,7 @@ async function loadMyHistory() {
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);gap:8px;flex-wrap:wrap;">
       <div>
         <div style="font-size:13px;font-weight:500;">${formatDateIndo(a.tanggal)}</div>
-        <div style="font-size:11px;color:var(--muted);">${(a.kegiatan||'').slice(0,60)}${a.catatanGuru ? ' · Catatan guru: ' + a.catatanGuru : ''}</div>
+        <div style="font-size:11px;color:var(--muted);">${String(a.kegiatan||'').slice(0,60)}${a.catatanGuru ? ' · Catatan guru: ' + a.catatanGuru : ''}</div>
       </div>
       <span class="${getStatusClass(a.status)}" style="padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;">${getStatusLabel(a.status)}</span>
     </div>
@@ -529,7 +529,7 @@ function renderReviewQueue() {
         <div style="flex:1;min-width:180px;">
           <div style="font-weight:600;font-size:15px;">${anak ? anak.nama : '(anak tidak ditemukan)'}</div>
           <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">${anak ? anak.tempatPkl : ''} · ${formatDateIndo(a.tanggal)}</div>
-          <div style="font-size:13px;">${(a.kegiatan||'').replace(/</g,'&lt;')}</div>
+          <div style="font-size:13px;">${String(a.kegiatan||'').replace(/</g,'&lt;')}</div>
         </div>
       </div>
       <input type="text" class="input-field" placeholder="Catatan guru (opsional)" id="catatan_${a.id}" style="font-size:13px;padding:8px;">
@@ -810,7 +810,7 @@ function renderDetailRiwayat() {
   container.innerHTML = riwayat.map(a => {
     const anak = cariAnak(a.anakId);
     const iconSumber = a.sumber === 'mingguan' ? '🗓️' : a.sumber === 'manual' ? '✍️' : '📱';
-    const catatanAman = (a.catatanGuru || '').replace(/"/g, '&quot;');
+    const catatanAman = String(a.catatanGuru || '').replace(/"/g, '&quot;');
     return `
       <div style="padding:8px 10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
