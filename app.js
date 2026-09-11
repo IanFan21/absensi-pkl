@@ -69,6 +69,7 @@ function formatDate(d) {
 }
 function formatDateIndo(dateStr) {
   const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return String(dateStr || '-');
   const namaHari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
   const namaBulan = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
   return `${namaHari[d.getDay()]}, ${d.getDate()} ${namaBulan[d.getMonth()]} ${d.getFullYear()}`;
@@ -555,7 +556,7 @@ function renderReviewedList() {
   const container = document.getElementById('reviewedList');
   const batas = new Date(); batas.setDate(batas.getDate() - 7);
   const list = guruData.absensi.filter(a => a.sumber === 'siswa' && a.status !== 'pending' && new Date(a.tanggal) >= batas)
-    .sort((a,b) => (b.tanggal||'').localeCompare(a.tanggal||''));
+    .sort((a,b) => String(b.tanggal||'').localeCompare(String(a.tanggal||'')));
   if (list.length === 0) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;text-align:center;padding:12px;">Belum ada.</p>'; return; }
   container.innerHTML = list.map(a => {
     const anak = cariAnak(a.anakId);
@@ -736,7 +737,22 @@ window.hapusKunjunganTanggal = async function(tgl) {
 };
 
 // ============ RIWAYAT ============
-function renderRiwayat() { renderRekapMingguan(); renderDetailRiwayat(); }
+function renderRiwayat() {
+  try {
+    renderRekapMingguan();
+  } catch (e) {
+    console.error('renderRekapMingguan error:', e);
+    const el = document.getElementById('rekapMingguan');
+    if (el) el.innerHTML = '<p style="color:var(--danger);font-size:12px;padding:8px;">Gagal menampilkan rekap: ' + e.message + '</p>';
+  }
+  try {
+    renderDetailRiwayat();
+  } catch (e) {
+    console.error('renderDetailRiwayat error:', e);
+    const el = document.getElementById('detailRiwayat');
+    if (el) el.innerHTML = '<p style="color:var(--danger);font-size:12px;padding:8px;">Gagal menampilkan detail: ' + e.message + '</p>';
+  }
+}
 window.renderDashboard = renderDashboard;
 window.renderRiwayat = renderRiwayat;
 
@@ -788,7 +804,7 @@ function renderDetailRiwayat() {
   if (filterAnak !== 'semua') riwayat = riwayat.filter(a => a.anakId === filterAnak);
   if (filterStatus !== 'semua') riwayat = riwayat.filter(a => a.status === filterStatus);
   if (filterSumber !== 'semua') riwayat = riwayat.filter(a => a.sumber === filterSumber);
-  riwayat.sort((a,b) => (b.tanggal||'').localeCompare(a.tanggal||''));
+  riwayat.sort((a,b) => String(b.tanggal||'').localeCompare(String(a.tanggal||'')));
 
   if (riwayat.length === 0) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:12px;text-align:center;">Tidak ada data</p>'; return; }
   container.innerHTML = riwayat.map(a => {
