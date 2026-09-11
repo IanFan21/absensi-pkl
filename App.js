@@ -555,7 +555,7 @@ function renderReviewedList() {
   const container = document.getElementById('reviewedList');
   const batas = new Date(); batas.setDate(batas.getDate() - 7);
   const list = guruData.absensi.filter(a => a.sumber === 'siswa' && a.status !== 'pending' && new Date(a.tanggal) >= batas)
-    .sort((a,b) => b.tanggal.localeCompare(a.tanggal));
+    .sort((a,b) => (b.tanggal||'').localeCompare(a.tanggal||''));
   if (list.length === 0) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;text-align:center;padding:12px;">Belum ada.</p>'; return; }
   container.innerHTML = list.map(a => {
     const anak = cariAnak(a.anakId);
@@ -788,7 +788,7 @@ function renderDetailRiwayat() {
   if (filterAnak !== 'semua') riwayat = riwayat.filter(a => a.anakId === filterAnak);
   if (filterStatus !== 'semua') riwayat = riwayat.filter(a => a.status === filterStatus);
   if (filterSumber !== 'semua') riwayat = riwayat.filter(a => a.sumber === filterSumber);
-  riwayat.sort((a,b) => b.tanggal.localeCompare(a.tanggal));
+  riwayat.sort((a,b) => (b.tanggal||'').localeCompare(a.tanggal||''));
 
   if (riwayat.length === 0) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:12px;text-align:center;">Tidak ada data</p>'; return; }
   container.innerHTML = riwayat.map(a => {
