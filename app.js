@@ -31,7 +31,7 @@ function api(action, payload) {
     const url = APPS_SCRIPT_URL + '?payload=' + encodeURIComponent(JSON.stringify(payload)) + '&callback=' + cbName;
     script.src = url;
     document.body.appendChild(script);
-    setTimeout(() => { if (!selesai) { selesai = true; bersihkan(); resolve({ ok: false, error: 'Waktu permintaan ke server habis (server mungkin lambat). Coba lagi.' }); } }, 20000);
+    setTimeout(() => { if (!selesai) { selesai = true; bersihkan(); resolve({ ok: false, error: 'Waktu permintaan ke server habis (server mungkin lambat). Coba lagi.' }); } }, 40000);
   });
 }
 
