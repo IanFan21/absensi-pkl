@@ -700,8 +700,11 @@ window.simpanSemuaMingguan = async function() {
     });
   });
   if (entries.length === 0) { alert('Belum ada data yang diisi untuk minggu ini.'); return; }
+  const btn = document.getElementById('btnSimpanMingguan');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan… (jangan klik lagi)'; }
   const r = await api('saveMingguan', { password: guruPassword, entries });
-  if (!r.ok) { alert('Gagal menyimpan: ' + (r.error||'')); return; }
+  if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Semua Data Minggu Ini'; }
+  if (!r.ok) { alert('Gagal menyimpan: ' + (r.error||'') + '\n\nCatatan: kalau ini karena waktu habis, data BISA JADI tetap tersimpan di server walau pesannya gagal. Cek dulu di tab Riwayat sebelum mencoba simpan ulang, supaya tidak dobel.'); return; }
   localStorage.removeItem(buatDraftKeyMingguan(currentMingguInfo.bulan, currentMingguInfo.tahun, currentMingguInfo.mingguKe));
   await loadGuruData();
   showTab('mingguan');
@@ -730,8 +733,12 @@ function renderRiwayatMingguan() {
 window.hapusKunjunganTanggal = async function(tgl) {
   if (!confirm('Yakin hapus semua data absen kunjungan pada tanggal ini?')) return;
   const ids = guruData.absensi.filter(a => a.sumber === 'mingguan' && a.tanggal === tgl).map(a => a.id);
-  const r = await api('deleteAbsensiBulk', { password: guruPassword, ids });
-  if (!r.ok) { alert('Gagal menghapus: ' + (r.error||'')); return; }
+  const UKURAN_KELOMPOK = 40;
+  for (let i = 0; i < ids.length; i += UKURAN_KELOMPOK) {
+    const potongan = ids.slice(i, i + UKURAN_KELOMPOK);
+    const r = await api('deleteAbsensiBulk', { password: guruPassword, ids: potongan });
+    if (!r.ok) { alert('Gagal menghapus: ' + (r.error||'')); return; }
+  }
   await loadGuruData();
   showTab('mingguan');
 };
