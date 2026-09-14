@@ -12,7 +12,7 @@ let _jsonpCounter = 0;
 function api(action, payload) {
   payload = payload || {};
   payload.action = action;
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const cbName = 'pklCb_' + (_jsonpCounter++) + '_' + Date.now();
     const script = document.createElement('script');
     let selesai = false;
@@ -26,12 +26,12 @@ function api(action, payload) {
       resolve(data);
     };
     script.onerror = function() {
-      if (!selesai) { bersihkan(); reject(new Error('Gagal memuat data dari server')); }
+      if (!selesai) { selesai = true; bersihkan(); resolve({ ok: false, error: 'Gagal terhubung ke server. Cek koneksi internet lalu coba lagi.' }); }
     };
     const url = APPS_SCRIPT_URL + '?payload=' + encodeURIComponent(JSON.stringify(payload)) + '&callback=' + cbName;
     script.src = url;
     document.body.appendChild(script);
-    setTimeout(() => { if (!selesai) { bersihkan(); reject(new Error('Waktu permintaan habis, coba lagi')); } }, 20000);
+    setTimeout(() => { if (!selesai) { selesai = true; bersihkan(); resolve({ ok: false, error: 'Waktu permintaan ke server habis (server mungkin lambat). Coba lagi.' }); } }, 20000);
   });
 }
 
