@@ -83,3 +83,31 @@ button:disabled { opacity:.5; cursor:not-allowed; transform:none !important; }
   .mingguan-hari-row { flex-direction:column; align-items:flex-start; }
   .mingguan-status-group { justify-content:flex-start; width:100%; }
 }
+
+/* ===== Penyesuaian responsif tambahan ===== */
+img, svg, video { max-width:100%; height:auto; }
+table { max-width:100%; }
+#rekapMingguan, #formMingguanGrid, #detailRiwayat { -webkit-overflow-scrolling:touch; }
+
+@media (max-width:900px) {
+  .role-card { min-width:130px; padding:20px 14px; }
+}
+
+@media (max-width:640px) {
+  h1 { font-size:20px !important; }
+  .role-card { flex:1 1 100%; min-width:0; }
+  .review-card > div:first-child { flex-direction:column; }
+  .review-card .foto-thumb { max-width:100% !important; }
+  .foto-thumb { max-width:100%; }
+  .input-field { font-size:16px; } /* cegah zoom otomatis di iOS saat fokus input */
+  .btn-primary, .btn-secondary { width:100%; }
+  .accordion-content.open { max-height:2200px; }
+  .format-box { font-size:10px; overflow-x:auto; }
+  .tempat-pkl-group { font-size:12px; }
+}
+
+@media (max-width:420px) {
+  .status-pill { padding:3px 6px; font-size:10px; }
+  .day-btn { min-width:52px; font-size:11px; padding:5px 8px; }
+  .mingguan-status-group { gap:3px; }
+}

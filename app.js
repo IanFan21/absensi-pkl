@@ -56,6 +56,7 @@ let currentMingguInfo = null;
 let statusMingguan = {};
 let hariAktifCepatSet = null;
 let siswaFotoDataUrl = '';
+let riwayatSaya = [];
 
 const today = new Date();
 const currentMonth = today.getMonth();
@@ -204,6 +205,8 @@ window.doLoginSiswa = async function() {
 window.logoutSiswa = function() {
   siswaSession = null;
   siswaFotoDataUrl = '';
+  riwayatSaya = [];
+  sedangMengirimAbsen = false;
   document.getElementById('siswaFotoInput').value = '';
   document.getElementById('siswaFotoPreview').style.display = 'none';
   document.getElementById('siswaKegiatanInput').value = '';
@@ -242,14 +245,22 @@ function compressImage(file, maxWidth, quality) {
   });
 }
 
+let sedangMengirimAbsen = false;
+
 window.doSubmitAbsen = async function() {
+  if (sedangMengirimAbsen) return;
   const kegiatan = document.getElementById('siswaKegiatanInput').value.trim();
   const msgEl = document.getElementById('siswaSubmitMsg');
   msgEl.style.display = 'none';
   if (!siswaFotoDataUrl) { alert('Foto wajib diunggah!'); return; }
   if (!kegiatan) { alert('Isi kegiatan hari ini!'); return; }
+
+  const sudahAda = (riwayatSaya || []).some(a => String(a.tanggal) === formatDate(today));
+  if (sudahAda && !confirm('Kamu sudah mengirim absen hari ini. Kirim ulang akan MENGGANTI kiriman sebelumnya (foto & kegiatan). Lanjutkan?')) return;
+
+  sedangMengirimAbsen = true;
   const btn = document.getElementById('btnKirimAbsen');
-  btn.disabled = true; btn.textContent = 'Mengirim…';
+  btn.disabled = true; btn.textContent = 'Mengirim… (jangan tutup halaman)';
   try {
     const uploadId = 'foto_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
     await apiUploadFoto(uploadId, siswaFotoDataUrl);
@@ -259,13 +270,13 @@ window.doSubmitAbsen = async function() {
     });
     if (r.ok) {
       msgEl.style.color = 'var(--success)';
-      msgEl.textContent = '✅ Terkirim! Menunggu review dari Bapak/Ibu Guru.';
+      msgEl.textContent = r.updated ? '✅ Absen hari ini berhasil diperbarui. Menunggu review dari Bapak/Ibu Guru.' : '✅ Terkirim! Menunggu review dari Bapak/Ibu Guru.';
       msgEl.style.display = 'block';
       document.getElementById('siswaKegiatanInput').value = '';
       document.getElementById('siswaFotoInput').value = '';
       document.getElementById('siswaFotoPreview').style.display = 'none';
       siswaFotoDataUrl = '';
-      loadMyHistory();
+      await loadMyHistory();
     } else {
       msgEl.style.color = 'var(--danger)';
       msgEl.textContent = '❌ ' + (r.error || 'Gagal mengirim.');
@@ -276,15 +287,26 @@ window.doSubmitAbsen = async function() {
     msgEl.textContent = '❌ Gagal mengirim, cek koneksi internet.';
     msgEl.style.display = 'block';
   }
-  btn.disabled = false; btn.textContent = '📤 Kirim Absen';
+  sedangMengirimAbsen = false;
+  btn.disabled = false;
+  perbaruiTombolKirim();
 };
+
+function perbaruiTombolKirim() {
+  const btn = document.getElementById('btnKirimAbsen');
+  if (!btn) return;
+  const sudahAda = (riwayatSaya || []).some(a => String(a.tanggal) === formatDate(today));
+  btn.textContent = sudahAda ? '🔄 Kirim Ulang (ganti absen hari ini)' : '📤 Kirim Absen';
+}
 
 async function loadMyHistory() {
   const container = document.getElementById('siswaRiwayat');
   container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Memuat…</p>';
   const r = await api('getMyAbsensi', { anakId: siswaSession.id, pin: siswaSession.pin });
   if (!r.ok) { container.innerHTML = '<p style="color:var(--danger);font-size:13px;">Gagal memuat riwayat.</p>'; return; }
-  const list = r.absensi.sort((a,b) => (b.tanggal+b.waktuKirim).localeCompare(a.tanggal+a.waktuKirim)).slice(0, 30);
+  riwayatSaya = r.absensi || [];
+  perbaruiTombolKirim();
+  const list = riwayatSaya.slice().sort((a,b) => String((b.tanggal||'')+(b.waktuKirim||'')).localeCompare(String((a.tanggal||'')+(a.waktuKirim||'')))).slice(0, 30);
   if (list.length === 0) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;text-align:center;padding:12px;">Belum ada riwayat.</p>'; return; }
   container.innerHTML = list.map(a => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);gap:8px;flex-wrap:wrap;">
