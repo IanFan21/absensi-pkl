@@ -119,7 +119,10 @@ function cariAnak(id) { return guruData.anak.find(a => a.id === id); }
 // ============ NAVIGASI LAYAR ============
 function showScreen(name) {
   ['KodeAkses','Role','GuruLogin','Siswa','Guru'].forEach(s => {
-    document.getElementById('screen' + s).style.display = (s === name) ? 'block' : 'none';
+    const el = document.getElementById('screen' + s);
+    if (!el) return;
+    el.style.display = '';
+    el.classList.toggle('screen-hidden', s !== name);
   });
 }
 window.kembaliKePilihPeran = function() { showScreen('Role'); };

@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<div class="container-wrap max-w-5xl mx-auto px-4 py-6">
+<div class="container-wrap">
 
   <!-- Header (selalu tampil) -->
   <div class="reveal mb-6" style="display:flex;align-items:center;gap:12px;">
@@ -26,7 +26,7 @@
   </div>
 
   <!-- ============ SCREEN: KODE AKSES ============ -->
-  <div id="screenKodeAkses" class="reveal" style="max-width:360px;margin:0 auto;">
+  <div id="screenKodeAkses" class="reveal">
     <div class="rounded-xl p-5" style="background:var(--card);border:1px solid var(--border);">
       <h3 style="font-size:16px;font-weight:600;margin-bottom:4px;">🔒 Kode Akses</h3>
       <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Masukkan kode akses yang diberikan guru untuk membuka sistem ini.</p>
@@ -37,7 +37,7 @@
   </div>
 
   <!-- ============ SCREEN: PILIH PERAN ============ -->
-  <div id="screenRole" class="reveal" style="display:none;">
+  <div id="screenRole" class="reveal screen-hidden">
     <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Masuk sebagai:</p>
     <div style="display:flex;gap:14px;flex-wrap:wrap;">
       <div class="role-card card-hover" onclick="pilihPeranGuru()">
@@ -55,7 +55,7 @@
   </div>
 
   <!-- ============ SCREEN: LOGIN GURU ============ -->
-  <div id="screenGuruLogin" class="reveal" style="display:none;max-width:360px;margin:0 auto;">
+  <div id="screenGuruLogin" class="reveal screen-hidden">
     <button onclick="kembaliKePilihPeran()" style="background:none;border:none;color:var(--muted);font-size:13px;margin-bottom:12px;padding:0;">← Kembali</button>
     <div class="rounded-xl p-5" style="background:var(--card);border:1px solid var(--border);">
       <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Masuk sebagai Guru</h3>
@@ -67,7 +67,7 @@
   </div>
 
   <!-- ============ SCREEN: SISWA ============ -->
-  <div id="screenSiswa" class="reveal" style="display:none;max-width:480px;margin:0 auto;">
+  <div id="screenSiswa" class="reveal screen-hidden">
     <button onclick="kembaliKePilihPeran()" style="background:none;border:none;color:var(--muted);font-size:13px;margin-bottom:12px;padding:0;">← Kembali</button>
 
     <div id="siswaLoginBox" class="rounded-xl p-5" style="background:var(--card);border:1px solid var(--border);">
@@ -112,7 +112,7 @@
   </div>
 
   <!-- ============ SCREEN: GURU (APLIKASI UTAMA) ============ -->
-  <div id="screenGuru" style="display:none;">
+  <div id="screenGuru" class="screen-hidden">
 
     <div class="reveal mb-6" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
       <div style="display:flex;align-items:center;gap:8px;">

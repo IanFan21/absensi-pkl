@@ -78,23 +78,51 @@ button:disabled { opacity:.5; cursor:not-allowed; transform:none !important; }
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
 ::-webkit-scrollbar-thumb:hover { background:var(--muted); }
-@media (max-width:640px) {
-  .container-wrap { padding-left:12px !important; padding-right:12px !important; }
-  .mingguan-hari-row { flex-direction:column; align-items:flex-start; }
-  .mingguan-status-group { justify-content:flex-start; width:100%; }
-}
-
 /* ===== Penyesuaian responsif tambahan ===== */
+.screen-hidden { display:none !important; }
 img, svg, video { max-width:100%; height:auto; }
 table { max-width:100%; }
 #rekapMingguan, #formMingguanGrid, #detailRiwayat { -webkit-overflow-scrolling:touch; }
 
+/* Lebar konten mengikuti ukuran layar, bukan patokan tetap */
+.container-wrap {
+  width:100%;
+  max-width:min(1280px, 100%);
+  margin-inline:auto;
+  padding-inline:clamp(12px, 3vw, 40px);
+  padding-block:clamp(16px, 2.5vh, 32px);
+}
+
+/* Layar kode akses / login: dibuat center penuh, tidak nyangkut di pojok atas */
+#screenKodeAkses, #screenGuruLogin {
+  width:100%;
+  max-width:clamp(320px, 90vw, 420px);
+  margin-inline:auto;
+  min-height:clamp(240px, 58vh, 520px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+#screenKodeAkses > div, #screenGuruLogin > div { width:100%; padding:clamp(18px, 3vw, 28px); }
+#screenSiswa { width:100%; max-width:clamp(320px, 92vw, 560px); margin-inline:auto; }
+
+/* Judul & kartu ikut menyesuaikan ukuran layar */
+h1 { font-size:clamp(19px, 2.2vw, 30px) !important; }
+.role-card { padding:clamp(18px, 2.5vw, 32px) clamp(14px, 2vw, 24px); }
+.input-field { padding:clamp(10px, 1.3vw, 14px); }
+
+@media (min-width:1024px) {
+  .role-card { min-width:190px; }
+}
+
 @media (max-width:900px) {
-  .role-card { min-width:130px; padding:20px 14px; }
+  .role-card { min-width:130px; }
 }
 
 @media (max-width:640px) {
-  h1 { font-size:20px !important; }
+  .container-wrap { padding-left:12px !important; padding-right:12px !important; }
+  .mingguan-hari-row { flex-direction:column; align-items:flex-start; }
+  .mingguan-status-group { justify-content:flex-start; width:100%; }
   .role-card { flex:1 1 100%; min-width:0; }
   .review-card > div:first-child { flex-direction:column; }
   .review-card .foto-thumb { max-width:100% !important; }
@@ -104,10 +132,16 @@ table { max-width:100%; }
   .accordion-content.open { max-height:2200px; }
   .format-box { font-size:10px; overflow-x:auto; }
   .tempat-pkl-group { font-size:12px; }
+  #screenKodeAkses, #screenGuruLogin { min-height:auto; margin-top:clamp(8px, 4vh, 40px); }
 }
 
 @media (max-width:420px) {
   .status-pill { padding:3px 6px; font-size:10px; }
   .day-btn { min-width:52px; font-size:11px; padding:5px 8px; }
   .mingguan-status-group { gap:3px; }
+}
+
+/* Layar pendek (landscape HP / netbook): jangan paksa tinggi besar */
+@media (max-height:600px) {
+  #screenKodeAkses, #screenGuruLogin { min-height:auto; }
 }
