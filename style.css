@@ -93,8 +93,6 @@ input, select, textarea { font-family: inherit; }
 .merek-ket { color: var(--muted); font-size: .8125rem; }
 .tanggal-hari { color: var(--muted); font-size: .875rem; }
 
-.layar { animation: masuk .18s ease-out both; }
-@keyframes masuk { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .layar--sempit, .layar--siswa { width: 100%; max-width: 32rem; }
 .tanggal-besar { display: none; }
 .judul-layar { margin: 0 0 var(--s-lg); font-size: clamp(1.5rem, 1.2rem + 1.6vw, 2.25rem); font-weight: 700; line-height: 1.15; letter-spacing: -.015em; }
@@ -336,7 +334,12 @@ textarea.input-field { min-height: 6rem; resize: vertical; line-height: 1.5; }
   .tb-hari { font-size: clamp(4rem, 8.5vw, 8rem); font-weight: 700; line-height: .92; letter-spacing: -.035em; }
   .tb-tgl { margin-top: var(--s-sm); width: fit-content; font-size: clamp(1.75rem, 3vw, 2.75rem); font-weight: 600; line-height: 1.1; letter-spacing: -.02em; background: linear-gradient(transparent 58%, var(--accent2-soft) 58%); }
   .tb-tahun { margin-top: var(--s-2xs); font-size: 1.25rem; font-weight: 500; color: var(--muted); }
+  .tb-jam { margin-top: var(--s-lg); font-size: 1.5rem; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
 }
+.tb-tgl { background-repeat: no-repeat; background-size: 100% 100%; }
+.role-card .peran-ikon { transition: transform .22s cubic-bezier(.3, 1.6, .5, 1); }
+.role-card:hover .peran-ikon, .role-card:focus-visible .peran-ikon { transform: translateY(-4px) rotate(-5deg); }
+.panel, .role-card { position: relative; }
 
 /* ---------- Lebar menengah ke atas ---------- */
 @media (min-width: 40rem) {
@@ -374,4 +377,57 @@ textarea.input-field { min-height: 6rem; resize: vertical; line-height: 1.5; }
   .print-area th { background: #f0f0f0; font-weight: 600; }
   .print-area .tempat-group { background: #e8eef3; font-weight: 600; padding: 6px 8px; margin-top: 12px; border-left: 3px solid #16304a; }
   .no-print { display: none !important; }
+}
+
+/* ---------- Gerak: satu rangkaian saat layar muncul ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes naik { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes naik-besar { from { opacity: 0; transform: translateY(42px); } to { opacity: 1; transform: none; } }
+  @keyframes garis { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes pop { 0% { opacity: 0; transform: scale(.55); } 65% { opacity: 1; transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+  @keyframes gambar { to { stroke-dashoffset: 0; } }
+  @keyframes sorot { from { background-size: 0 100%; } to { background-size: 100% 100%; } }
+  @keyframes geser { 0%, 100% { transform: none; } 20% { transform: translateX(-7px); } 45% { transform: translateX(6px); } 70% { transform: translateX(-3px); } }
+  @keyframes kedip { 0%, 49% { opacity: 1; } 50%, 100% { opacity: .15; } }
+  @keyframes ayun { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(14deg); } }
+
+  /* kepala: tanda merek muncul, centang tergambar */
+  .merek-tanda { animation: pop .5s cubic-bezier(.3, 1.4, .5, 1) backwards; }
+  .merek-tanda path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: gambar .45s .3s ease-out forwards; }
+  .kepala h1, .merek-ket { animation: naik .5s .1s cubic-bezier(.2, .7, .2, 1) backwards; }
+  .merek-ket { animation-delay: .18s; }
+
+  /* tanggal besar: tiga baris naik berurutan, sorotan stabilo menyapu, titik dua berkedip */
+  .tb-hari { animation: naik-besar .8s .15s cubic-bezier(.16, .8, .2, 1) backwards; }
+  .tb-tgl { animation: naik-besar .8s .27s cubic-bezier(.16, .8, .2, 1) backwards, sorot .7s .95s cubic-bezier(.4, 0, .2, 1) backwards; }
+  .tb-tahun { animation: naik-besar .8s .39s cubic-bezier(.16, .8, .2, 1) backwards; }
+  .tb-jam { animation: naik .6s .6s cubic-bezier(.2, .7, .2, 1) backwards; }
+  .kedip { animation: kedip 1s steps(1, end) infinite; }
+
+  /* layar: panel naik, garis atas tergambar, isi menyusul */
+  .layar > * { animation: naik .5s .3s cubic-bezier(.2, .7, .2, 1) backwards; }
+  .layar > .kembali, .layar > .judul-layar { animation-delay: .22s; }
+  .layar .panel, .role-card { border-top-color: transparent; }
+  .layar .panel::before, .role-card::before { content: ""; position: absolute; left: -1px; right: -1px; top: -3px; height: 3px; background: var(--rule); border-radius: 3px 3px 0 0; transform-origin: left; animation: garis .6s .4s cubic-bezier(.6, 0, .2, 1) backwards; }
+  .layar .panel > * { animation: naik .45s backwards cubic-bezier(.2, .7, .2, 1); }
+  .layar .panel > :nth-child(1) { animation-delay: .5s; }
+  .layar .panel > :nth-child(2) { animation-delay: .57s; }
+  .layar .panel > :nth-child(3) { animation-delay: .64s; }
+  .layar .panel > :nth-child(4) { animation-delay: .71s; }
+  .layar .panel > :nth-child(n+5) { animation-delay: .78s; }
+
+  /* kartu peran: bergantian; ikon pop lalu garisnya tergambar */
+  .peran .role-card { animation: naik .55s .5s cubic-bezier(.2, .7, .2, 1) backwards; }
+  .peran .role-card:nth-child(2) { animation-delay: .62s; }
+  .role-card::before { animation-delay: .6s; }
+  .role-card:nth-child(2)::before { animation-delay: .72s; }
+  .peran-ikon { animation: pop .55s .8s cubic-bezier(.3, 1.4, .5, 1) backwards; }
+  .role-card:nth-child(2) .peran-ikon { animation-delay: .92s; }
+  .peran-ikon svg > * { stroke-dasharray: 1; stroke-dashoffset: 1; animation: gambar .6s 1s ease-out forwards; }
+  .role-card:nth-child(2) .peran-ikon svg > * { animation-delay: 1.12s; }
+  .role-card:hover .penunjuk { transform-box: fill-box; transform-origin: 100% 100%; animation: ayun .6s ease-in-out 1; }
+  .role-card:hover .rumbai { transform-box: fill-box; transform-origin: 50% 0; animation: ayun .6s ease-in-out 1; }
+
+  /* kesalahan: panel bergetar sebentar */
+  .galat, .layar .panel > .galat { animation: geser .4s 0s ease-out; }
 }

@@ -8,7 +8,7 @@
 <meta name="description" content="Sistem absensi PKL - privat untuk guru dan siswa">
 <link rel="preload" href="fonts/bricolage-grotesque-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/public-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="style.css?v=20261025">
+<link rel="stylesheet" href="style.css?v=20261025b">
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 </head>
 <body>
@@ -21,7 +21,7 @@
   <header class="kepala">
     <div class="merek">
       <span class="merek-tanda" aria-hidden="true">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg>
       </span>
       <div>
         <h1>Absensi Anak PKL</h1>
@@ -33,7 +33,7 @@
 
   <main id="utama">
 
-  <p class="tanggal-besar" aria-hidden="true"><span class="tb-hari" id="tbHari"></span><span class="tb-tgl" id="tbTgl"></span><span class="tb-tahun" id="tbTahun"></span></p>
+  <p class="tanggal-besar" aria-hidden="true"><span class="tb-hari" id="tbHari"></span><span class="tb-tgl" id="tbTgl"></span><span class="tb-tahun" id="tbTahun"></span><span class="tb-jam"><span id="tbJamH"></span><span class="kedip">:</span><span id="tbJamM"></span></span></p>
 
   <!-- ============ SCREEN: KODE AKSES ============ -->
   <div id="screenKodeAkses" class="layar layar--sempit">
@@ -55,14 +55,14 @@
     <div class="peran">
       <button type="button" class="role-card" onclick="pilihPeranGuru()">
         <span class="peran-ikon" aria-hidden="true">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 13l2 2 4-4"/></svg>
+          <svg width="36" height="32" viewBox="0 0 36 32" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect pathLength="1" x="2" y="3" width="20" height="14" rx="1.5"/><path pathLength="1" d="M6 8h9M6 12h5"/><path class="penunjuk" pathLength="1" d="M23 19l-6-5"/><circle pathLength="1" cx="27" cy="12" r="3.5"/><path pathLength="1" d="M20 30c0-4.2 3.1-7.5 7-7.5s7 3.3 7 7.5"/></svg>
         </span>
         <span class="peran-nama">Guru</span>
         <span class="peran-ket">Kelola dan review absensi</span>
       </button>
       <button type="button" class="role-card" onclick="pilihPeranSiswa()">
         <span class="peran-ikon" aria-hidden="true">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          <svg width="36" height="32" viewBox="0 0 36 32" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M5 9l13-6 13 6-13 6z"/><path class="rumbai" pathLength="1" d="M31 9v7"/><circle pathLength="1" cx="18" cy="20" r="4"/><path pathLength="1" d="M9 31c0-4.5 4-7 9-7s9 2.5 9 7"/></svg>
         </span>
         <span class="peran-nama">Siswa PKL</span>
         <span class="peran-ket">Kirim absen harian</span>
@@ -479,10 +479,16 @@ Budi Santoso, SMK Negeri 1, Kota Contoh, XII TKJ A, Toko Komputer Maju, 4821
     document.getElementById('tbHari').textContent = new Intl.DateTimeFormat('id-ID', { weekday: 'long' }).format(d);
     document.getElementById('tbTgl').textContent = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long' }).format(d);
     document.getElementById('tbTahun').textContent = d.getFullYear();
+    var jam = function () {
+      var n = new Date();
+      document.getElementById('tbJamH').textContent = ('0' + n.getHours()).slice(-2);
+      document.getElementById('tbJamM').textContent = ('0' + n.getMinutes()).slice(-2);
+    };
+    jam(); setInterval(jam, 10000);
   } catch (e) { el.textContent = d.toDateString(); }
 })();
 </script>
-<script src="app.js?v=20261025"></script>
+<script src="app.js?v=20261025b"></script>
 
 </body>
 </html>
