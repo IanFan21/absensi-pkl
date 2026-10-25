@@ -3,404 +3,485 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
 <title>Sistem Absensi Anak PKL</title>
 <meta name="description" content="Sistem absensi PKL - privat untuk guru dan siswa">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<link rel="preload" href="fonts/bricolage-grotesque-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/public-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 </head>
 <body>
 
-<div class="container-wrap">
+<a class="lewati" href="#utama">Lewati ke isi</a>
 
-  <!-- Header (selalu tampil) -->
-  <div class="reveal mb-6" style="display:flex;align-items:center;gap:12px;">
-    <div style="width:48px;height:48px;border-radius:14px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+<div class="halaman">
+
+  <!-- Kepala halaman (selalu tampil) -->
+  <header class="kepala">
+    <div class="merek">
+      <span class="merek-tanda" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      </span>
+      <div>
+        <h1>Absensi Anak PKL</h1>
+        <p class="merek-ket">Privat untuk guru dan siswa</p>
+      </div>
     </div>
-    <div>
-      <p style="font-family:monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">Sistem Absensi · Privat</p>
-      <h1 class="text-2xl font-bold" style="color:var(--text);line-height:1.2;margin:0">Absensi Anak PKL</h1>
-    </div>
-  </div>
+    <time class="tanggal-hari" id="tglHariIni"></time>
+  </header>
+
+  <main id="utama">
+
+  <p class="tanggal-besar" aria-hidden="true"><span class="tb-hari" id="tbHari"></span><span class="tb-tgl" id="tbTgl"></span><span class="tb-tahun" id="tbTahun"></span></p>
 
   <!-- ============ SCREEN: KODE AKSES ============ -->
-  <div id="screenKodeAkses" class="reveal">
-    <div class="rounded-xl p-5" style="background:var(--card);border:1px solid var(--border);">
-      <h3 style="font-size:16px;font-weight:600;margin-bottom:4px;">🔒 Kode Akses</h3>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Masukkan kode akses yang diberikan guru untuk membuka sistem ini.</p>
-      <input type="password" id="kodeAksesInput" class="input-field" placeholder="Kode Akses" style="margin-bottom:10px;">
-      <button onclick="doCekKodeAkses()" id="btnCekKodeAkses" class="btn-primary" style="width:100%;">Buka</button>
-      <p id="kodeAksesError" style="color:var(--danger);font-size:12px;margin-top:8px;display:none;"></p>
-    </div>
+  <div id="screenKodeAkses" class="layar layar--sempit">
+    <section class="panel">
+      <h2 class="panel-judul">Kode akses</h2>
+      <p class="bantu">Masukkan kode akses dari guru untuk membuka sistem ini.</p>
+      <div class="isian">
+        <label for="kodeAksesInput">Kode akses</label>
+        <input type="password" id="kodeAksesInput" class="input-field" autocomplete="off">
+      </div>
+      <button onclick="doCekKodeAkses()" id="btnCekKodeAkses" class="btn-primary btn-penuh">Buka</button>
+      <p id="kodeAksesError" class="galat" role="alert" style="display:none;"></p>
+    </section>
   </div>
 
   <!-- ============ SCREEN: PILIH PERAN ============ -->
-  <div id="screenRole" class="reveal screen-hidden">
-    <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Masuk sebagai:</p>
-    <div style="display:flex;gap:14px;flex-wrap:wrap;">
-      <div class="role-card card-hover" onclick="pilihPeranGuru()">
-        <div style="font-size:32px;margin-bottom:8px;">👨‍🏫</div>
-        <div style="font-weight:600;font-size:16px;">Guru</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px;">Kelola &amp; review absensi</div>
-      </div>
-      <div class="role-card card-hover" onclick="pilihPeranSiswa()">
-        <div style="font-size:32px;margin-bottom:8px;">🧑‍🎓</div>
-        <div style="font-weight:600;font-size:16px;">Siswa PKL</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px;">Kirim absen harian</div>
-      </div>
+  <div id="screenRole" class="layar layar--sempit screen-hidden">
+    <h2 class="judul-layar">Masuk sebagai siapa?</h2>
+    <div class="peran">
+      <button type="button" class="role-card" onclick="pilihPeranGuru()">
+        <span class="peran-ikon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 13l2 2 4-4"/></svg>
+        </span>
+        <span class="peran-nama">Guru</span>
+        <span class="peran-ket">Kelola dan review absensi</span>
+      </button>
+      <button type="button" class="role-card" onclick="pilihPeranSiswa()">
+        <span class="peran-ikon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        </span>
+        <span class="peran-nama">Siswa PKL</span>
+        <span class="peran-ket">Kirim absen harian</span>
+      </button>
     </div>
-    <p id="urlBelumDiset" style="display:none;margin-top:16px;font-size:12px;color:var(--danger);background:var(--danger-soft);padding:10px 12px;border-radius:8px;">⚠️ APPS_SCRIPT_URL belum diisi di dalam file HTML ini. Buka file, cari <code>GANTI_DENGAN_URL_WEB_APP_ANDA</code>, dan ganti dengan URL Web App dari Google Apps Script (lihat PANDUAN_SETUP.md).</p>
+    <p id="urlBelumDiset" class="galat galat--kotak" style="display:none;">APPS_SCRIPT_URL belum diisi di dalam file HTML ini. Buka file, cari <code>GANTI_DENGAN_URL_WEB_APP_ANDA</code>, dan ganti dengan URL Web App dari Google Apps Script (lihat PANDUAN_SETUP.md).</p>
   </div>
 
   <!-- ============ SCREEN: LOGIN GURU ============ -->
-  <div id="screenGuruLogin" class="reveal screen-hidden">
-    <button onclick="kembaliKePilihPeran()" style="background:none;border:none;color:var(--muted);font-size:13px;margin-bottom:12px;padding:0;">← Kembali</button>
-    <div class="rounded-xl p-5" style="background:var(--card);border:1px solid var(--border);">
-      <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Masuk sebagai Guru</h3>
-      <input type="password" id="guruPasswordInput" class="input-field" placeholder="Password Guru" style="margin-bottom:10px;">
-      <button onclick="doLoginGuru()" class="btn-primary" style="width:100%;">Masuk</button>
-      <p id="guruLoginError" style="color:var(--danger);font-size:12px;margin-top:8px;display:none;"></p>
-      <p style="font-size:11px;color:var(--muted);margin-top:10px;">Password awal: <code>guru123</code> — segera ganti lewat tab Pengaturan setelah masuk.</p>
-    </div>
+  <div id="screenGuruLogin" class="layar layar--sempit screen-hidden">
+    <button type="button" onclick="kembaliKePilihPeran()" class="kembali">&larr; Kembali</button>
+    <section class="panel">
+      <h2 class="panel-judul">Masuk sebagai guru</h2>
+      <div class="isian">
+        <label for="guruPasswordInput">Password guru</label>
+        <input type="password" id="guruPasswordInput" class="input-field" autocomplete="current-password">
+      </div>
+      <button onclick="doLoginGuru()" class="btn-primary btn-penuh">Masuk</button>
+      <p id="guruLoginError" class="galat" role="alert" style="display:none;"></p>
+      <p class="bantu bantu--kecil">Password awal: <code>guru123</code>. Segera ganti lewat tab Atur setelah masuk.</p>
+    </section>
   </div>
 
   <!-- ============ SCREEN: SISWA ============ -->
-  <div id="screenSiswa" class="reveal screen-hidden">
-    <button onclick="kembaliKePilihPeran()" style="background:none;border:none;color:var(--muted);font-size:13px;margin-bottom:12px;padding:0;">← Kembali</button>
+  <div id="screenSiswa" class="layar layar--siswa screen-hidden">
+    <button type="button" onclick="kembaliKePilihPeran()" class="kembali">&larr; Kembali</button>
 
-    <div id="siswaLoginBox" class="rounded-xl p-5" style="background:var(--card);border:1px solid var(--border);">
-      <h3 style="font-size:16px;font-weight:600;margin-bottom:4px;">Masuk sebagai Siswa</h3>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Pilih nama kamu dan masukkan PIN pribadi dari guru.</p>
-      <select id="siswaNamaSelect" class="input-field" style="margin-bottom:10px;"><option value="">Memuat daftar nama…</option></select>
-      <input type="text" inputmode="numeric" id="siswaPinInput" class="input-field pin-dots" placeholder="PIN" maxlength="6" style="margin-bottom:10px;">
-      <button onclick="doLoginSiswa()" class="btn-primary" style="width:100%;">Masuk</button>
-      <p id="siswaLoginError" style="color:var(--danger);font-size:12px;margin-top:8px;display:none;"></p>
-    </div>
+    <section id="siswaLoginBox" class="panel">
+      <h2 class="panel-judul">Masuk sebagai siswa</h2>
+      <p class="bantu">Pilih nama kamu dan masukkan PIN pribadi dari guru.</p>
+      <div class="isian">
+        <label for="siswaNamaSelect">Nama</label>
+        <select id="siswaNamaSelect" class="input-field"><option value="">Memuat daftar nama…</option></select>
+      </div>
+      <div class="isian">
+        <label for="siswaPinInput">PIN</label>
+        <input type="text" inputmode="numeric" id="siswaPinInput" class="input-field pin-dots" maxlength="6" autocomplete="off">
+      </div>
+      <button onclick="doLoginSiswa()" class="btn-primary btn-penuh">Masuk</button>
+      <p id="siswaLoginError" class="galat" role="alert" style="display:none;"></p>
+    </section>
 
     <div id="siswaDashboard" style="display:none;">
-      <div class="rounded-xl p-5 mb-4" style="background:var(--card);border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <section class="panel panel--identitas">
         <div>
-          <div style="font-weight:600;font-size:16px;" id="siswaNamaLabel"></div>
-          <div style="font-size:12px;color:var(--muted);" id="siswaTempatLabel"></div>
+          <p class="identitas-nama" id="siswaNamaLabel"></p>
+          <p class="identitas-ket" id="siswaTempatLabel"></p>
         </div>
-        <button onclick="logoutSiswa()" class="btn-secondary" style="padding:6px 12px;font-size:12px;">Ganti akun</button>
-      </div>
+        <button onclick="logoutSiswa()" class="btn-secondary btn-kecil">Ganti akun</button>
+      </section>
 
-      <div class="rounded-xl p-5 mb-4" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Kirim Absen Hari Ini</h3>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:12px;" id="siswaTanggalLabel"></p>
+      <section class="panel">
+        <h2 class="panel-judul">Kirim absen hari ini</h2>
+        <p class="bantu" id="siswaTanggalLabel"></p>
 
-        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:6px;">Foto kegiatan / selfie di lokasi PKL *</label>
-        <input type="file" id="siswaFotoInput" accept="image/*" style="margin-bottom:8px;font-size:13px;">
-        <p style="font-size:11px;color:var(--muted);margin:0 0 8px 0;">Bisa ambil foto langsung dengan kamera, atau pilih dari galeri/penyimpanan HP maupun laptop.</p>
-        <img id="siswaFotoPreview" class="foto-thumb" style="display:none;margin-bottom:10px;">
+        <div class="isian">
+          <label for="siswaFotoInput">Foto kegiatan atau selfie di lokasi PKL <span class="wajib">(wajib)</span></label>
+          <input type="file" id="siswaFotoInput" accept="image/*" class="input-berkas">
+          <p class="bantu bantu--kecil">Bisa ambil foto langsung dengan kamera, atau pilih dari galeri atau penyimpanan HP maupun laptop.</p>
+        </div>
+        <img id="siswaFotoPreview" class="foto-thumb" alt="Pratinjau foto yang dipilih" style="display:none;">
 
-        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:6px;">Kegiatan hari ini *</label>
-        <textarea id="siswaKegiatanInput" class="input-field" rows="3" placeholder="Contoh: Membantu instalasi jaringan LAN di ruang admin" style="margin-bottom:12px;resize:vertical;"></textarea>
+        <div class="isian">
+          <label for="siswaKegiatanInput">Kegiatan hari ini <span class="wajib">(wajib)</span></label>
+          <textarea id="siswaKegiatanInput" class="input-field" rows="3" placeholder="Contoh: Membantu instalasi jaringan LAN di ruang admin"></textarea>
+        </div>
 
-        <button onclick="doSubmitAbsen()" id="btnKirimAbsen" class="btn-primary" style="width:100%;">📤 Kirim Absen</button>
-        <p id="siswaSubmitMsg" style="font-size:13px;margin-top:10px;display:none;"></p>
-      </div>
+        <button onclick="doSubmitAbsen()" id="btnKirimAbsen" class="btn-primary btn-penuh">Kirim absen</button>
+        <p id="siswaSubmitMsg" class="hasil-kirim" role="status" style="display:none;"></p>
+      </section>
 
-      <div class="rounded-xl p-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;">Riwayat Absen Saya</h3>
-        <div id="siswaRiwayat" style="display:flex;flex-direction:column;gap:8px;"></div>
-      </div>
+      <section class="panel">
+        <h2 class="panel-judul">Riwayat absen saya</h2>
+        <div id="siswaRiwayat" class="daftar"></div>
+      </section>
     </div>
   </div>
 
   <!-- ============ SCREEN: GURU (APLIKASI UTAMA) ============ -->
   <div id="screenGuru" class="screen-hidden">
 
-    <div class="reveal mb-6" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <select id="bulanSelect" style="padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:14px;"></select>
-        <select id="tahunSelect" style="padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:14px;"></select>
+    <div class="bar-guru">
+      <div class="bar-periode">
+        <select id="bulanSelect" class="input-field input-ringkas" aria-label="Bulan"></select>
+        <select id="tahunSelect" class="input-field input-ringkas" aria-label="Tahun"></select>
       </div>
-      <div style="display:flex;gap:8px;">
-        <button onclick="loadGuruData()" title="Muat ulang data" style="padding:8px 12px;border-radius:10px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:13px;">🔄</button>
-        <button onclick="logoutGuru()" class="btn-secondary" style="padding:8px 14px;font-size:13px;">Keluar</button>
+      <div class="bar-aksi">
+        <button onclick="loadGuruData()" class="btn-secondary btn-kecil">Muat ulang</button>
+        <button onclick="logoutGuru()" class="btn-secondary btn-kecil">Keluar</button>
       </div>
     </div>
 
-    <div class="reveal mb-6" style="display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;overflow-x:auto;">
-      <button class="tab-btn active" onclick="showTab('dashboard')" style="flex:1;min-width:88px;padding:10px 6px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:500;white-space:nowrap;">
-        <span style="display:block;font-size:18px;">📊</span>Dashboard
+    <nav class="tabs" aria-label="Menu guru">
+      <button class="tab-btn active" onclick="showTab('dashboard')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        <span class="tab-teks">Dashboard</span>
       </button>
-      <button class="tab-btn" onclick="showTab('review')" style="flex:1;min-width:88px;padding:10px 6px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:500;white-space:nowrap;position:relative;">
-        <span style="display:block;font-size:18px;">📥</span>Review<span id="badgePending" style="display:none;position:absolute;top:4px;right:10px;background:var(--danger);color:#fff;border-radius:10px;font-size:10px;padding:1px 5px;"></span>
+      <button class="tab-btn" onclick="showTab('review')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13l3.5 7v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/></svg>
+        <span class="tab-teks">Review</span>
+        <span id="badgePending" class="lencana" style="display:none;"></span>
       </button>
-      <button class="tab-btn" onclick="showTab('mingguan')" style="flex:1;min-width:88px;padding:10px 6px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:500;white-space:nowrap;">
-        <span style="display:block;font-size:18px;">🗓️</span>Mingguan
+      <button class="tab-btn" onclick="showTab('mingguan')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
+        <span class="tab-teks">Mingguan</span>
       </button>
-      <button class="tab-btn" onclick="showTab('riwayat')" style="flex:1;min-width:88px;padding:10px 6px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:500;white-space:nowrap;">
-        <span style="display:block;font-size:18px;">📋</span>Riwayat
+      <button class="tab-btn" onclick="showTab('riwayat')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <span class="tab-teks">Riwayat</span>
       </button>
-      <button class="tab-btn" onclick="showTab('anak')" style="flex:1;min-width:88px;padding:10px 6px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:500;white-space:nowrap;">
-        <span style="display:block;font-size:18px;">👥</span>Anak
+      <button class="tab-btn" onclick="showTab('anak')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14.5a5.5 5.5 0 0 1 4.5 5.5"/></svg>
+        <span class="tab-teks">Anak</span>
       </button>
-      <button class="tab-btn" onclick="showTab('pengaturan')" style="flex:1;min-width:88px;padding:10px 6px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:500;white-space:nowrap;">
-        <span style="display:block;font-size:18px;">⚙️</span>Atur
+      <button class="tab-btn" onclick="showTab('pengaturan')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h8M18 6h2M4 12h2M12 12h8M4 18h10M20 18h0"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+        <span class="tab-teks">Atur</span>
       </button>
-    </div>
+    </nav>
 
     <!-- TAB: DASHBOARD -->
     <div id="tab-dashboard">
-      <div class="reveal flex flex-wrap gap-3 mb-6">
-        <div class="card-hover rounded-xl p-4" style="flex:1 1 120px;background:var(--card);border:1px solid var(--border);">
-          <div style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Hadir</div>
-          <div id="statHadir" style="font-size:26px;font-weight:700;">0</div>
-        </div>
-        <div class="card-hover rounded-xl p-4" style="flex:1 1 120px;background:var(--card);border:1px solid var(--border);">
-          <div style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Izin</div>
-          <div id="statIzin" style="font-size:26px;font-weight:700;">0</div>
-        </div>
-        <div class="card-hover rounded-xl p-4" style="flex:1 1 120px;background:var(--card);border:1px solid var(--border);">
-          <div style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Alpa</div>
-          <div id="statAlpa" style="font-size:26px;font-weight:700;">0</div>
-        </div>
-        <div class="card-hover rounded-xl p-4" style="flex:1 1 120px;background:var(--card);border:1px solid var(--border);">
-          <div style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Libur</div>
-          <div id="statLibur" style="font-size:26px;font-weight:700;">0</div>
-        </div>
-        <div class="card-hover rounded-xl p-4" style="flex:1 1 120px;background:var(--card);border:1px solid var(--border);">
-          <div style="color:var(--pending);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Menunggu</div>
-          <div id="statPending" style="font-size:26px;font-weight:700;color:var(--pending);">0</div>
-        </div>
-        <div class="card-hover rounded-xl p-4" style="flex:1 1 120px;background:var(--card);border:1px solid var(--border);">
-          <div style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Jumlah Anak</div>
-          <div id="statAnak" style="font-size:26px;font-weight:700;">0</div>
-        </div>
-      </div>
+      <section class="rekap" aria-label="Ringkasan bulan ini">
+        <div class="rekap-sel rekap--hadir"><p class="rekap-label">Hadir</p><p class="rekap-angka" id="statHadir">0</p></div>
+        <div class="rekap-sel rekap--izin"><p class="rekap-label">Izin</p><p class="rekap-angka" id="statIzin">0</p></div>
+        <div class="rekap-sel rekap--alpa"><p class="rekap-label">Alpa</p><p class="rekap-angka" id="statAlpa">0</p></div>
+        <div class="rekap-sel rekap--libur"><p class="rekap-label">Libur</p><p class="rekap-angka" id="statLibur">0</p></div>
+        <div class="rekap-sel rekap--pending"><p class="rekap-label">Menunggu</p><p class="rekap-angka" id="statPending">0</p></div>
+        <div class="rekap-sel"><p class="rekap-label">Jumlah anak</p><p class="rekap-angka" id="statAnak">0</p></div>
+      </section>
 
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-          <h3 style="font-size:16px;font-weight:600;margin:0;">Rekap Kehadiran Per Minggu</h3>
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-            <select id="filterSumberDashboard" onchange="renderDashboard()" style="padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;">
-              <option value="semua">Semua Sumber</option>
-              <option value="siswa">Kiriman Siswa</option>
-              <option value="mingguan">Kunjungan Mingguan</option>
-              <option value="manual">Input Manual</option>
+      <section class="panel">
+        <div class="panel-kepala">
+          <h2 class="panel-judul">Rekap kehadiran per minggu</h2>
+          <div class="panel-aksi">
+            <select id="filterSumberDashboard" onchange="renderDashboard()" class="input-field input-ringkas" aria-label="Sumber data">
+              <option value="semua">Semua sumber</option>
+              <option value="siswa">Kiriman siswa</option>
+              <option value="mingguan">Kunjungan mingguan</option>
+              <option value="manual">Input manual</option>
             </select>
-            <button onclick="downloadRekapPDF()" style="padding:6px 12px;border-radius:6px;background:var(--info-soft);color:var(--info);border:1px solid var(--info);font-size:12px;">PDF</button>
+            <button onclick="downloadRekapPDF()" class="btn-secondary btn-kecil">Unduh PDF</button>
           </div>
         </div>
-        <div id="chartMingguan" style="height:280px;width:100%"></div>
-      </div>
+        <div id="chartMingguan" class="grafik"></div>
+      </section>
 
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Ringkasan Per Anak</h3>
-        <div id="ringkasanAnak" style="display:flex;flex-direction:column;gap:8px;"></div>
-      </div>
+      <section class="panel">
+        <h2 class="panel-judul">Ringkasan per anak</h2>
+        <div id="ringkasanAnak" class="daftar"></div>
+      </section>
     </div>
 
     <!-- TAB: REVIEW SISWA -->
     <div id="tab-review" style="display:none;">
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:16px;font-weight:600;margin-bottom:4px;">Kiriman Menunggu Review</h3>
-        <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">Cek foto &amp; kegiatan yang dikirim siswa, lalu tentukan statusnya.</p>
-        <div id="reviewQueue" style="display:flex;flex-direction:column;gap:12px;"></div>
-      </div>
+      <section class="panel">
+        <h2 class="panel-judul">Kiriman menunggu review</h2>
+        <p class="bantu">Cek foto dan kegiatan yang dikirim siswa, lalu tentukan statusnya.</p>
+        <div id="reviewQueue" class="daftar daftar--lebar"></div>
+      </section>
 
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <button onclick="toggleTambahManual()" style="width:100%;padding:12px;border-radius:10px;background:var(--info-soft);color:var(--info);border:1px solid var(--info);font-size:14px;font-weight:600;">➕ Tambah / Ubah Absen Manual</button>
+      <section class="panel">
+        <button onclick="toggleTambahManual()" class="btn-accordion">Tambah atau ubah absen manual</button>
         <div id="manualAccordion" class="accordion-content">
-          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px;">
-            <select id="manualAnak" class="input-field"></select>
-            <input type="date" id="manualTanggal" class="input-field">
-            <select id="manualStatus" class="input-field">
-              <option value="hadir">Hadir</option>
-              <option value="izin">Izin</option>
-              <option value="alpa">Alpa / Tidak Masuk</option>
-              <option value="libur">Libur</option>
-            </select>
-            <input type="text" id="manualCatatan" class="input-field" placeholder="Catatan (opsional)">
+          <div class="accordion-isi">
+            <div class="isian">
+              <label for="manualAnak">Anak</label>
+              <select id="manualAnak" class="input-field"></select>
+            </div>
+            <div class="isian">
+              <label for="manualTanggal">Tanggal</label>
+              <input type="date" id="manualTanggal" class="input-field">
+            </div>
+            <div class="isian">
+              <label for="manualStatus">Status</label>
+              <select id="manualStatus" class="input-field">
+                <option value="hadir">Hadir</option>
+                <option value="izin">Izin</option>
+                <option value="alpa">Alpa / tidak masuk</option>
+                <option value="libur">Libur</option>
+              </select>
+            </div>
+            <div class="isian">
+              <label for="manualCatatan">Catatan <span class="opsional">(opsional)</span></label>
+              <input type="text" id="manualCatatan" class="input-field">
+            </div>
             <button onclick="simpanManual()" class="btn-primary">Simpan</button>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="reveal rounded-xl p-5" style="background:var(--card);border:1px solid var(--border);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <h3 style="font-size:15px;font-weight:600;margin:0;">Sudah Direview (7 hari terakhir)</h3>
-        </div>
-        <div id="reviewedList" style="display:flex;flex-direction:column;gap:8px;"></div>
-      </div>
+      <section class="panel">
+        <h2 class="panel-judul">Sudah direview (7 hari terakhir)</h2>
+        <div id="reviewedList" class="daftar"></div>
+      </section>
     </div>
 
     <!-- TAB: ABSEN MINGGUAN -->
     <div id="tab-mingguan" style="display:none;">
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:16px;font-weight:600;margin-bottom:4px;">Absen Mingguan - Kunjungan Lapangan</h3>
-        <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">Input SEMUA HARI dalam satu minggu berdasarkan kunjungan langsung, lalu klik "Simpan Semua".</p>
-        <div style="margin-bottom:14px;">
-          <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px;">Pilih Minggu:</label>
+      <section class="panel">
+        <h2 class="panel-judul">Absen mingguan: kunjungan lapangan</h2>
+        <p class="bantu">Isi semua hari dalam satu minggu berdasarkan kunjungan langsung, lalu klik &ldquo;Simpan semua&rdquo;.</p>
+        <div class="isian isian--sedang">
+          <label for="mingguSelect">Pilih minggu</label>
           <select id="mingguSelect" onchange="renderMingguanBaru()" class="input-field"></select>
         </div>
-        <div id="infoMinggu" style="margin-bottom:14px;padding:10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);">
-          <div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:8px;" id="labelRentangMinggu"></div>
-          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Cepat set untuk <strong>SEMUA ANAK</strong> pada hari yang dipilih:</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;" id="cepatSetHari"></div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button onclick="cepatSetSemuaAnakHariIni('hadir')" class="status-pill status-hadir" style="padding:6px 12px;font-size:12px;">✓ Semua Hadir</button>
-            <button onclick="cepatSetSemuaAnakHariIni('izin')" class="status-pill status-izin" style="padding:6px 12px;font-size:12px;">📝 Semua Izin</button>
-            <button onclick="cepatSetSemuaAnakHariIni('alpa')" class="status-pill status-alpa" style="padding:6px 12px;font-size:12px;">✗ Semua Alpa</button>
-            <button onclick="cepatSetSemuaAnakHariIni('libur')" class="status-pill status-libur" style="padding:6px 12px;font-size:12px;">🏖 Semua Libur</button>
-            <button onclick="cepatSetSemuaAnakHariIni('belum')" class="status-pill status-belum" style="padding:6px 12px;font-size:12px;">🗑 Bersihkan</button>
+        <div id="infoMinggu" class="info-minggu">
+          <p class="info-rentang" id="labelRentangMinggu"></p>
+          <p class="bantu bantu--kecil">Atur cepat untuk <strong>semua anak</strong> pada hari yang dipilih:</p>
+          <div class="deret" id="cepatSetHari"></div>
+          <div class="deret">
+            <button onclick="cepatSetSemuaAnakHariIni('hadir')" class="status-pill status-hadir">Semua hadir</button>
+            <button onclick="cepatSetSemuaAnakHariIni('izin')" class="status-pill status-izin">Semua izin</button>
+            <button onclick="cepatSetSemuaAnakHariIni('alpa')" class="status-pill status-alpa">Semua alpa</button>
+            <button onclick="cepatSetSemuaAnakHariIni('libur')" class="status-pill status-libur">Semua libur</button>
+            <button onclick="cepatSetSemuaAnakHariIni('belum')" class="status-pill status-belum">Bersihkan</button>
           </div>
         </div>
-        <div id="formMingguanGrid" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;overflow-x:auto;"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button onclick="simpanSemuaMingguan()" id="btnSimpanMingguan" class="btn-primary" style="flex:1;min-width:180px;">💾 Simpan Semua Data Minggu Ini</button>
-          <button onclick="bersihkanDraftMingguan()" style="padding:12px 16px;border-radius:10px;background:var(--danger-soft);color:var(--danger);border:1px solid var(--danger);font-size:14px;">🗑 Hapus Draft</button>
+        <p class="bantu bantu--kecil">H = hadir, I = izin, A = alpa, L = libur. Klik huruf yang sama sekali lagi untuk mengosongkan.</p>
+        <div id="formMingguanGrid" class="grid-mingguan"></div>
+        <div class="deret deret--aksi">
+          <button onclick="simpanSemuaMingguan()" id="btnSimpanMingguan" class="btn-primary">Simpan semua data minggu ini</button>
+          <button onclick="bersihkanDraftMingguan()" class="btn-bahaya">Hapus draft</button>
         </div>
-      </div>
-      <div class="reveal rounded-xl p-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Riwayat Kunjungan</h3>
-        <div id="riwayatMingguan" style="display:flex;flex-direction:column;gap:8px;"></div>
-      </div>
+      </section>
+      <section class="panel">
+        <h2 class="panel-judul">Riwayat kunjungan</h2>
+        <div id="riwayatMingguan" class="daftar"></div>
+      </section>
     </div>
 
     <!-- TAB: RIWAYAT -->
     <div id="tab-riwayat" style="display:none;">
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Filter Riwayat</h3>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <select id="filterAnak" onchange="renderRiwayat()" class="input-field" style="flex:1;min-width:140px;"><option value="semua">Semua Anak</option></select>
-          <select id="filterStatus" onchange="renderRiwayat()" class="input-field" style="flex:1;min-width:120px;">
-            <option value="semua">Semua Status</option>
+      <section class="panel">
+        <h2 class="panel-judul">Filter riwayat</h2>
+        <div class="filter-baris">
+          <select id="filterAnak" onchange="renderRiwayat()" class="input-field" aria-label="Anak"><option value="semua">Semua anak</option></select>
+          <select id="filterStatus" onchange="renderRiwayat()" class="input-field" aria-label="Status">
+            <option value="semua">Semua status</option>
             <option value="pending">Menunggu</option>
             <option value="hadir">Hadir</option>
             <option value="izin">Izin</option>
             <option value="alpa">Alpa</option>
             <option value="libur">Libur</option>
           </select>
-          <select id="filterSumberRiwayat" onchange="renderRiwayat()" class="input-field" style="flex:1;min-width:140px;">
-            <option value="semua">Semua Sumber</option>
-            <option value="siswa">Kiriman Siswa</option>
-            <option value="mingguan">Kunjungan Mingguan</option>
-            <option value="manual">Input Manual</option>
+          <select id="filterSumberRiwayat" onchange="renderRiwayat()" class="input-field" aria-label="Sumber data">
+            <option value="semua">Semua sumber</option>
+            <option value="siswa">Kiriman siswa</option>
+            <option value="mingguan">Kunjungan mingguan</option>
+            <option value="manual">Input manual</option>
           </select>
         </div>
-      </div>
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Rekap Per Minggu</h3>
-        <div id="rekapMingguan" style="overflow-x:auto;"></div>
-      </div>
-      <div class="reveal rounded-xl p-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Detail Riwayat Absen</h3>
-        <div id="detailRiwayat" style="display:flex;flex-direction:column;gap:6px;max-height:500px;overflow-y:auto;"></div>
-      </div>
+      </section>
+      <section class="panel">
+        <h2 class="panel-judul">Rekap per minggu</h2>
+        <div id="rekapMingguan" class="tabel-gulir"></div>
+      </section>
+      <section class="panel">
+        <h2 class="panel-judul">Detail riwayat absen</h2>
+        <div id="detailRiwayat" class="daftar daftar--gulir"></div>
+      </section>
     </div>
 
     <!-- TAB: DATA ANAK -->
     <div id="tab-anak" style="display:none;">
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Tambah / Edit Anak PKL</h3>
+      <section class="panel">
+        <h2 class="panel-judul">Tambah atau edit anak PKL</h2>
         <input type="hidden" id="editAnakId" value="">
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <input type="text" id="namaAnak" placeholder="Nama Lengkap *" class="input-field">
-          <input type="text" id="tempatPkl" placeholder="Tempat PKL *" class="input-field">
-          <input type="text" id="sekolahAnak" placeholder="Asal Sekolah (opsional)" class="input-field">
-          <input type="text" id="kotaAnak" placeholder="Kota (opsional)" class="input-field">
-          <input type="text" id="jurusanAnak" placeholder="Kelas / Jurusan (opsional)" class="input-field">
-          <input type="text" id="waAnak" placeholder="No. WhatsApp (opsional)" class="input-field">
-          <input type="text" id="pinAnak" placeholder="PIN siswa (kosongkan = dibuat otomatis)" class="input-field" maxlength="6">
-          <div style="display:flex;gap:8px;">
-            <button onclick="simpanAnak()" class="btn-primary" style="flex:1;">Simpan</button>
-            <button onclick="batalEditAnak()" class="btn-secondary">Batal</button>
+        <div class="form-dua">
+          <div class="isian">
+            <label for="namaAnak">Nama lengkap <span class="wajib">(wajib)</span></label>
+            <input type="text" id="namaAnak" class="input-field">
+          </div>
+          <div class="isian">
+            <label for="tempatPkl">Tempat PKL <span class="wajib">(wajib)</span></label>
+            <input type="text" id="tempatPkl" class="input-field">
+          </div>
+          <div class="isian">
+            <label for="sekolahAnak">Asal sekolah <span class="opsional">(opsional)</span></label>
+            <input type="text" id="sekolahAnak" class="input-field">
+          </div>
+          <div class="isian">
+            <label for="kotaAnak">Kota <span class="opsional">(opsional)</span></label>
+            <input type="text" id="kotaAnak" class="input-field">
+          </div>
+          <div class="isian">
+            <label for="jurusanAnak">Kelas / jurusan <span class="opsional">(opsional)</span></label>
+            <input type="text" id="jurusanAnak" class="input-field">
+          </div>
+          <div class="isian">
+            <label for="waAnak">No. WhatsApp <span class="opsional">(opsional)</span></label>
+            <input type="text" id="waAnak" class="input-field">
+          </div>
+          <div class="isian">
+            <label for="pinAnak">PIN siswa <span class="opsional">(kosong = dibuat otomatis)</span></label>
+            <input type="text" id="pinAnak" class="input-field" maxlength="6">
           </div>
         </div>
-      </div>
+        <div class="deret deret--aksi">
+          <button onclick="simpanAnak()" class="btn-primary">Simpan</button>
+          <button onclick="batalEditAnak()" class="btn-secondary">Batal</button>
+        </div>
+      </section>
 
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <button onclick="toggleBulk()" style="width:100%;padding:12px;border-radius:10px;background:var(--info-soft);color:var(--info);border:1px solid var(--info);font-size:14px;font-weight:600;">➕ Input Banyak Sekaligus (Massal)</button>
+      <section class="panel">
+        <button onclick="toggleBulk()" class="btn-accordion">Input banyak sekaligus (massal)</button>
         <div id="bulkAccordion" class="accordion-content">
-          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
-            <p style="font-size:13px;color:var(--muted);margin-bottom:10px;"><strong>Format (pisahkan dengan KOMA):</strong></p>
+          <div class="accordion-isi">
+            <p class="bantu"><strong>Format (pisahkan dengan koma):</strong></p>
             <div class="format-box">
 Nama, Sekolah, Kota, Kelas/Jurusan, Tempat PKL, PIN(opsional)<br>
-<span style="color:var(--muted);">Contoh:</span><br>
+<span class="format-contoh">Contoh:</span><br>
 Andi Pratama, SMK Negeri 1, Kota Contoh, XII TKJ A, Toko Komputer Maju<br>
 Budi Santoso, SMK Negeri 1, Kota Contoh, XII TKJ A, Toko Komputer Maju, 4821
             </div>
-            <textarea id="bulkInput" class="bulk-textarea input-field" placeholder="Andi Pratama, SMK Negeri 1, Kota Contoh, XII TKJ A, Toko Komputer Maju" style="margin-top:10px;"></textarea>
-            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
-              <button onclick="prosesBulkInput()" style="flex:1;min-width:140px;" class="btn-primary">📥 Masukkan Semua</button>
+            <label class="sr-only" for="bulkInput">Daftar anak, satu baris per anak</label>
+            <textarea id="bulkInput" class="bulk-textarea input-field" placeholder="Andi Pratama, SMK Negeri 1, Kota Contoh, XII TKJ A, Toko Komputer Maju"></textarea>
+            <div class="deret deret--aksi">
+              <button onclick="prosesBulkInput()" class="btn-primary">Masukkan semua</button>
               <button onclick="bersihkanBulk()" class="btn-secondary">Bersihkan</button>
             </div>
-            <div id="bulkResult" style="margin-top:10px;font-size:12px;"></div>
+            <div id="bulkResult" class="hasil-proses" role="status"></div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <button onclick="toggleImportLama()" style="width:100%;padding:12px;border-radius:10px;background:var(--warning-soft);color:var(--warning);border:1px solid var(--warning);font-size:14px;font-weight:600;">📂 Import Data Lama (Backup JSON)</button>
+      <section class="panel">
+        <button onclick="toggleImportLama()" class="btn-accordion btn-accordion--hati">Import data lama (backup JSON)</button>
         <div id="importAccordion" class="accordion-content">
-          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
-            <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Pilih file backup JSON dari versi lama (hasil tombol "Backup Data"). Data yang sudah ada tidak akan ditimpa/duplikat.</p>
-            <input type="file" id="importFileInput" accept=".json" class="input-field" style="margin-bottom:10px;">
-            <button onclick="prosesImportLama()" class="btn-primary" style="width:100%;">Import Sekarang</button>
-            <div id="importResult" style="margin-top:10px;font-size:12px;"></div>
+          <div class="accordion-isi">
+            <p class="bantu">Pilih file backup JSON dari versi lama (hasil tombol &ldquo;Backup data&rdquo;). Data yang sudah ada tidak akan ditimpa atau digandakan.</p>
+            <label class="sr-only" for="importFileInput">File backup JSON</label>
+            <input type="file" id="importFileInput" accept=".json" class="input-berkas">
+            <button onclick="prosesImportLama()" class="btn-primary">Import sekarang</button>
+            <div id="importResult" class="hasil-proses" role="status"></div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="reveal rounded-xl p-5" style="background:var(--card);border:1px solid var(--border);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-          <h3 style="font-size:16px;font-weight:600;margin:0;">Daftar Anak PKL</h3>
-          <span style="font-size:12px;color:var(--accent);background:var(--accent-soft);padding:3px 10px;border-radius:12px;">📍 Diurutkan: Tempat PKL</span>
+      <section class="panel">
+        <div class="panel-kepala">
+          <h2 class="panel-judul">Daftar anak PKL</h2>
+          <span class="penanda">Diurutkan menurut tempat PKL</span>
         </div>
-        <div id="daftarAnak" style="display:flex;flex-direction:column;gap:4px;"></div>
-      </div>
+        <div id="daftarAnak" class="daftar"></div>
+      </section>
     </div>
 
     <!-- TAB: PENGATURAN -->
     <div id="tab-pengaturan" style="display:none;">
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Ganti Password Guru</h3>
-        <div style="display:flex;flex-direction:column;gap:10px;max-width:360px;">
-          <input type="password" id="pwLama" placeholder="Password lama" class="input-field">
-          <input type="password" id="pwBaru" placeholder="Password baru (min. 4 karakter)" class="input-field">
-          <button onclick="gantiPasswordGuru()" class="btn-primary">Simpan Password Baru</button>
-          <p id="pwMsg" style="font-size:12px;display:none;"></p>
+      <section class="panel">
+        <h2 class="panel-judul">Ganti password guru</h2>
+        <div class="form-sempit">
+          <div class="isian">
+            <label for="pwLama">Password lama</label>
+            <input type="password" id="pwLama" class="input-field" autocomplete="current-password">
+          </div>
+          <div class="isian">
+            <label for="pwBaru">Password baru <span class="opsional">(minimal 4 karakter)</span></label>
+            <input type="password" id="pwBaru" class="input-field" autocomplete="new-password">
+          </div>
+          <button onclick="gantiPasswordGuru()" class="btn-primary">Simpan password baru</button>
+          <p id="pwMsg" class="pesan" role="status" style="display:none;"></p>
         </div>
-      </div>
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Ganti Kode Akses (Pintu Depan)</h3>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Ini kode yang diminta sebelum layar pilih Guru/Siswa. Dicek di server, jadi aman dari Inspect Element.</p>
-        <div style="display:flex;flex-direction:column;gap:10px;max-width:360px;">
-          <input type="password" id="pwGuruUtkKode" placeholder="Password Guru (verifikasi)" class="input-field">
-          <input type="text" id="kodeAksesBaru" placeholder="Kode akses baru (min. 3 karakter)" class="input-field">
-          <button onclick="gantiKodeAksesGuru()" class="btn-primary">Simpan Kode Akses Baru</button>
-          <p id="kodeAksesMsg" style="font-size:12px;display:none;"></p>
+      </section>
+      <section class="panel">
+        <h2 class="panel-judul">Ganti kode akses (pintu depan)</h2>
+        <p class="bantu">Kode ini diminta sebelum layar pilih guru atau siswa. Dicek di server, jadi aman dari Inspect Element.</p>
+        <div class="form-sempit">
+          <div class="isian">
+            <label for="pwGuruUtkKode">Password guru <span class="opsional">(verifikasi)</span></label>
+            <input type="password" id="pwGuruUtkKode" class="input-field" autocomplete="current-password">
+          </div>
+          <div class="isian">
+            <label for="kodeAksesBaru">Kode akses baru <span class="opsional">(minimal 3 karakter)</span></label>
+            <input type="text" id="kodeAksesBaru" class="input-field">
+          </div>
+          <button onclick="gantiKodeAksesGuru()" class="btn-primary">Simpan kode akses baru</button>
+          <p id="kodeAksesMsg" class="pesan" role="status" style="display:none;"></p>
         </div>
-      </div>
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Perbaiki Foto Lama</h3>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Foto yang dikirim siswa sebelum perbaikan tampilan foto mungkin tidak muncul di kartu Review/Riwayat. Klik ini sekali untuk memperbaiki link foto yang sudah ada.</p>
-        <button onclick="perbaikiUrlFotoLama()" class="btn-secondary">🔧 Perbaiki Foto Lama</button>
-        <p id="perbaikiFotoMsg" style="font-size:12px;display:none;margin-top:8px;"></p>
-      </div>
-      <div class="reveal rounded-xl p-5 mb-5" style="background:var(--card);border:1px solid var(--border);">
-        <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Backup Data</h3>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Unduh salinan data saat ini sebagai file JSON (cadangan tambahan di luar Google Sheets).</p>
-        <button onclick="exportData()" class="btn-secondary">⬇ Unduh Backup JSON</button>
-      </div>
+      </section>
+      <section class="panel">
+        <h2 class="panel-judul">Perbaiki foto lama</h2>
+        <p class="bantu">Foto yang dikirim siswa sebelum perbaikan tampilan foto mungkin tidak muncul di kartu Review atau Riwayat. Klik sekali untuk memperbaiki link foto yang sudah ada.</p>
+        <button onclick="perbaikiUrlFotoLama()" class="btn-secondary">Perbaiki foto lama</button>
+        <p id="perbaikiFotoMsg" class="pesan" role="status" style="display:none;"></p>
+      </section>
+      <section class="panel">
+        <h2 class="panel-judul">Backup data</h2>
+        <p class="bantu">Unduh salinan data saat ini sebagai file JSON (cadangan tambahan di luar Google Sheets).</p>
+        <button onclick="exportData()" class="btn-secondary">Unduh backup JSON</button>
+      </section>
     </div>
 
   </div>
 
-  <div class="mt-10 pt-4 text-center" style="border-top:1px solid var(--border);">
-    <p style="font-size:12px;color:var(--muted);">Sistem Absensi PKL · Privat untuk guru &amp; siswa · Data tersimpan di Google Sheets</p>
-  </div>
+  </main>
+
+  <footer class="kaki">
+    <p>Sistem Absensi PKL. Privat untuk guru dan siswa. Data tersimpan di Google Sheets.</p>
+  </footer>
 
   <div id="printArea" class="print-area" style="display:none;"></div>
 </div>
 
+<script>
+(function () {
+  var el = document.getElementById('tglHariIni');
+  if (!el) return;
+  var d = new Date();
+  el.setAttribute('datetime', d.toISOString().slice(0, 10));
+  try {
+    el.textContent = new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+    document.getElementById('tbHari').textContent = new Intl.DateTimeFormat('id-ID', { weekday: 'long' }).format(d);
+    document.getElementById('tbTgl').textContent = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long' }).format(d);
+    document.getElementById('tbTahun').textContent = d.getFullYear();
+  } catch (e) { el.textContent = d.toDateString(); }
+})();
+</script>
 <script src="app.js"></script>
 
 </body>

@@ -273,7 +273,7 @@ window.doSubmitAbsen = async function() {
     });
     if (r.ok) {
       msgEl.style.color = 'var(--success)';
-      msgEl.textContent = r.updated ? '✅ Absen hari ini berhasil diperbarui. Menunggu review dari Bapak/Ibu Guru.' : '✅ Terkirim! Menunggu review dari Bapak/Ibu Guru.';
+      msgEl.textContent = r.updated ? 'Absen hari ini berhasil diperbarui. Menunggu review dari Bapak/Ibu Guru.' : 'Terkirim! Menunggu review dari Bapak/Ibu Guru.';
       msgEl.style.display = 'block';
       document.getElementById('siswaKegiatanInput').value = '';
       document.getElementById('siswaFotoInput').value = '';
@@ -282,12 +282,12 @@ window.doSubmitAbsen = async function() {
       await loadMyHistory();
     } else {
       msgEl.style.color = 'var(--danger)';
-      msgEl.textContent = '❌ ' + (r.error || 'Gagal mengirim.');
+      msgEl.textContent = '' + (r.error || 'Gagal mengirim.');
       msgEl.style.display = 'block';
     }
   } catch (e) {
     msgEl.style.color = 'var(--danger)';
-    msgEl.textContent = '❌ Gagal mengirim, cek koneksi internet.';
+    msgEl.textContent = 'Gagal mengirim, cek koneksi internet.';
     msgEl.style.display = 'block';
   }
   sedangMengirimAbsen = false;
@@ -299,7 +299,7 @@ function perbaruiTombolKirim() {
   const btn = document.getElementById('btnKirimAbsen');
   if (!btn) return;
   const sudahAda = (riwayatSaya || []).some(a => String(a.tanggal) === formatDate(today));
-  btn.textContent = sudahAda ? '🔄 Kirim Ulang (ganti absen hari ini)' : '📤 Kirim Absen';
+  btn.textContent = sudahAda ? 'Kirim ulang (ganti absen hari ini)' : 'Kirim absen';
 }
 
 async function loadMyHistory() {
@@ -312,12 +312,12 @@ async function loadMyHistory() {
   const list = riwayatSaya.slice().sort((a,b) => String((b.tanggal||'')+(b.waktuKirim||'')).localeCompare(String((a.tanggal||'')+(a.waktuKirim||'')))).slice(0, 30);
   if (list.length === 0) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;text-align:center;padding:12px;">Belum ada riwayat.</p>'; return; }
   container.innerHTML = list.map(a => `
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);gap:8px;flex-wrap:wrap;">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:4px;background:var(--well);border:1px solid var(--border);gap:8px;flex-wrap:wrap;">
       <div>
         <div style="font-size:13px;font-weight:500;">${formatDateIndo(a.tanggal)}</div>
-        <div style="font-size:11px;color:var(--muted);">${String(a.kegiatan||'').slice(0,60)}${a.catatanGuru ? ' · Catatan guru: ' + a.catatanGuru : ''}</div>
+        <div style="font-size:12px;color:var(--muted);">${String(a.kegiatan||'').slice(0,60)}${a.catatanGuru ? ' · Catatan guru: ' + a.catatanGuru : ''}</div>
       </div>
-      <span class="${getStatusClass(a.status)}" style="padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;">${getStatusLabel(a.status)}</span>
+      <span class="${getStatusClass(a.status)}" style="padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500;">${getStatusLabel(a.status)}</span>
     </div>
   `).join('');
 }
@@ -470,15 +470,15 @@ function renderChartMingguan(bulan, tahun, filterSumber) {
   chartInstance.setOption({
     backgroundColor: 'transparent',
     tooltip: { trigger: 'axis' },
-    legend: { data: ['Hadir','Izin','Alpa','Libur'], top: 0, textStyle: { color: '#64748b', fontSize: 11 } },
+    legend: { data: ['Hadir','Izin','Alpa','Libur'], top: 0, textStyle: { color: '#55616c', fontSize: 12, fontFamily: 'Public Sans, sans-serif' }, itemWidth: 12, itemHeight: 12 },
     grid: { left: '3%', right: '4%', bottom: '3%', top: '18%', containLabel: true },
-    xAxis: { type: 'category', data: weekLabels, axisLabel: { color: '#64748b', fontSize: 11 } },
-    yAxis: { type: 'value', axisLabel: { color: '#64748b', fontSize: 11 }, splitLine: { lineStyle: { color: 'rgba(15,23,42,.06)' } } },
+    xAxis: { type: 'category', data: weekLabels, axisLabel: { color: '#55616c', fontSize: 12, fontFamily: 'Public Sans, sans-serif' }, axisLine: { lineStyle: { color: '#8794a0' } } },
+    yAxis: { type: 'value', axisLabel: { color: '#55616c', fontSize: 12, fontFamily: 'Public Sans, sans-serif' }, splitLine: { lineStyle: { color: 'rgba(20,27,34,.1)' } } },
     series: [
-      { name:'Hadir', type:'bar', stack:'total', data:hadirData, itemStyle:{ color:'#297a2e', borderRadius:[4,4,0,0] } },
-      { name:'Izin', type:'bar', stack:'total', data:izinData, itemStyle:{ color:'#d97706' } },
-      { name:'Alpa', type:'bar', stack:'total', data:alpaData, itemStyle:{ color:'#dc2626' } },
-      { name:'Libur', type:'bar', stack:'total', data:liburData, itemStyle:{ color:'#7c3aed' } }
+      { name:'Hadir', type:'bar', stack:'total', barMaxWidth:44, data:hadirData, itemStyle:{ color:'#17724a' } },
+      { name:'Izin', type:'bar', stack:'total', barMaxWidth:44, data:izinData, itemStyle:{ color:'#c47a00' } },
+      { name:'Alpa', type:'bar', stack:'total', barMaxWidth:44, data:alpaData, itemStyle:{ color:'#b4232f' } },
+      { name:'Libur', type:'bar', stack:'total', barMaxWidth:44, data:liburData, itemStyle:{ color:'#5b4bb8' } }
     ]
   }, true);
   window.removeEventListener('resize', window._chartResizeHandler);
@@ -491,11 +491,11 @@ function renderRingkasanAnak(bulan, tahun, filterSumber) {
   const anakUrut = getAnakUrutTempat();
   if (anakUrut.length === 0) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:12px;text-align:center;">Belum ada data anak PKL.</p>'; return; }
 
-  let html = `<p style="font-size:11px;color:var(--muted);margin-bottom:8px;">Filter: <strong>${filterSumber === 'semua' ? 'Semua Sumber' : filterSumber === 'siswa' ? 'Kiriman Siswa' : filterSumber === 'mingguan' ? 'Kunjungan Mingguan' : 'Input Manual'}</strong></p>`;
+  let html = `<p style="font-size:12px;color:var(--muted);margin-bottom:8px;">Filter: <strong>${filterSumber === 'semua' ? 'Semua Sumber' : filterSumber === 'siswa' ? 'Kiriman Siswa' : filterSumber === 'mingguan' ? 'Kunjungan Mingguan' : 'Input Manual'}</strong></p>`;
   let lastTempat = '';
   anakUrut.forEach(anak => {
     const tempat = anak.tempatPkl || 'Tidak diketahui';
-    if (tempat !== lastTempat) { html += `<div class="tempat-pkl-group">📍 ${tempat}</div>`; lastTempat = tempat; }
+    if (tempat !== lastTempat) { html += `<div class="tempat-pkl-group">${tempat}</div>`; lastTempat = tempat; }
 
     let semuaAbsen = guruData.absensi.filter(a => {
       const d = new Date(a.tanggal);
@@ -515,7 +515,7 @@ function renderRingkasanAnak(bulan, tahun, filterSumber) {
     const persenHadir = Math.round((c.h / totalSemua) * 100);
 
     html += `
-      <div style="padding:12px;border-radius:10px;background:var(--bg);border:1px solid var(--border);">
+      <div style="padding:12px;border-radius:4px;background:var(--well);border:1px solid var(--border);">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:4px;">
           <div style="font-weight:600;font-size:14px;">${anak.nama}</div>
           <div style="font-size:12px;color:var(--accent);font-weight:600;">Hadir: ${persenHadir}%</div>
@@ -527,8 +527,8 @@ function renderRingkasanAnak(bulan, tahun, filterSumber) {
           <span style="color:var(--libur);">Libur:${c.l}</span>
           ${c.p > 0 ? `<span style="color:var(--pending);">Menunggu:${c.p}</span>` : ''}
         </div>
-        <div style="height:6px;background:rgba(128,128,128,.1);border-radius:3px;overflow:hidden;">
-          <div style="height:100%;width:${persenHadir}%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;"></div>
+        <div style="height:6px;background:var(--line);border-radius:3px;overflow:hidden;">
+          <div style="height:100%;width:${persenHadir}%;background:var(--success);border-radius:3px;"></div>
         </div>
       </div>`;
   });
@@ -544,13 +544,13 @@ function renderReviewTab() {
 function renderReviewQueue() {
   const container = document.getElementById('reviewQueue');
   const pending = guruData.absensi.filter(a => a.status === 'pending').sort((a,b) => (a.waktuKirim||'').localeCompare(b.waktuKirim||''));
-  if (pending.length === 0) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:12px;text-align:center;">Tidak ada kiriman yang menunggu review. 🎉</p>'; return; }
+  if (pending.length === 0) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:12px;text-align:center;">Tidak ada kiriman yang menunggu review.</p>'; return; }
   container.innerHTML = pending.map(a => {
     const anak = cariAnak(a.anakId);
     return `
     <div class="review-card">
       <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        ${a.foto ? `<a href="${a.foto}" target="_blank"><img src="${a.foto}" class="foto-thumb" style="max-width:160px;"></a>` : '<div style="width:160px;height:100px;background:var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);">Tanpa foto</div>'}
+        ${a.foto ? `<a href="${a.foto}" target="_blank"><img src="${a.foto}" class="foto-thumb" style="max-width:160px;"></a>` : '<div style="width:160px;height:100px;background:var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);">Tanpa foto</div>'}
         <div style="flex:1;min-width:180px;">
           <div style="font-weight:600;font-size:15px;">${anak ? anak.nama : '(anak tidak ditemukan)'}</div>
           <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">${anak ? anak.tempatPkl : ''} · ${formatDateIndo(a.tanggal)}</div>
@@ -559,10 +559,10 @@ function renderReviewQueue() {
       </div>
       <input type="text" class="input-field" placeholder="Catatan guru (opsional)" id="catatan_${a.id}" style="font-size:13px;padding:8px;">
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <button onclick="prosesReview('${a.id}','hadir')" class="status-pill status-hadir" style="padding:8px 14px;font-size:13px;">✓ Hadir</button>
-        <button onclick="prosesReview('${a.id}','izin')" class="status-pill status-izin" style="padding:8px 14px;font-size:13px;">📝 Izin</button>
-        <button onclick="prosesReview('${a.id}','alpa')" class="status-pill status-alpa" style="padding:8px 14px;font-size:13px;">✗ Alpa</button>
-        <button onclick="prosesReview('${a.id}','libur')" class="status-pill status-libur" style="padding:8px 14px;font-size:13px;">🏖 Libur</button>
+        <button onclick="prosesReview('${a.id}','hadir')" class="status-pill status-hadir" style="padding:8px 14px;font-size:13px;">Hadir</button>
+        <button onclick="prosesReview('${a.id}','izin')" class="status-pill status-izin" style="padding:8px 14px;font-size:13px;">Izin</button>
+        <button onclick="prosesReview('${a.id}','alpa')" class="status-pill status-alpa" style="padding:8px 14px;font-size:13px;">Alpa</button>
+        <button onclick="prosesReview('${a.id}','libur')" class="status-pill status-libur" style="padding:8px 14px;font-size:13px;">Libur</button>
       </div>
     </div>`;
   }).join('');
@@ -586,12 +586,12 @@ function renderReviewedList() {
   container.innerHTML = list.map(a => {
     const anak = cariAnak(a.anakId);
     return `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);gap:8px;flex-wrap:wrap;">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:4px;background:var(--well);border:1px solid var(--border);gap:8px;flex-wrap:wrap;">
         <div>
           <div style="font-size:13px;font-weight:500;">${anak ? anak.nama : '-'}</div>
-          <div style="font-size:11px;color:var(--muted);">${formatDateIndo(a.tanggal)}${a.catatanGuru ? ' · ' + a.catatanGuru : ''}</div>
+          <div style="font-size:12px;color:var(--muted);">${formatDateIndo(a.tanggal)}${a.catatanGuru ? ' · ' + a.catatanGuru : ''}</div>
         </div>
-        <span class="${getStatusClass(a.status)}" style="padding:2px 10px;border-radius:12px;font-size:11px;font-weight:500;">${getStatusLabel(a.status)}</span>
+        <span class="${getStatusClass(a.status)}" style="padding:2px 10px;border-radius:4px;font-size:12px;font-weight:500;">${getStatusLabel(a.status)}</span>
       </div>`;
   }).join('');
 }
@@ -648,7 +648,7 @@ window.renderMingguanBaru = function() {
   const hariList = getHariKerja(minggu);
   currentMingguInfo = { bulan, tahun, mingguKe: mingguIdx + 1, hariList, start: minggu.start, end: minggu.end };
   hariAktifCepatSet = hariList.length ? hariList[0].tanggal : null;
-  document.getElementById('labelRentangMinggu').textContent = `📅 Minggu ${mingguIdx+1}: ${formatDateIndo(formatDate(minggu.start))} s/d ${formatDateIndo(formatDate(minggu.end))}`;
+  document.getElementById('labelRentangMinggu').textContent = `Minggu ${mingguIdx+1}: ${formatDateIndo(formatDate(minggu.start))} s/d ${formatDateIndo(formatDate(minggu.end))}`;
 
   statusMingguan = {};
   const draft = muatDraftMingguanLengkap(bulan, tahun, mingguIdx + 1);
@@ -694,16 +694,18 @@ function renderGridMingguan(hariList) {
   let html = ''; let lastTempat = '';
   anakUrut.forEach(anak => {
     const tempat = anak.tempatPkl || 'Tidak diketahui';
-    if (tempat !== lastTempat) { html += `<div class="tempat-pkl-group">📍 ${tempat}</div>`; lastTempat = tempat; }
+    if (tempat !== lastTempat) { html += `<div class="tempat-pkl-group">${tempat}</div>`; lastTempat = tempat; }
     if (!statusMingguan[anak.id]) statusMingguan[anak.id] = {};
     html += `<div class="mingguan-hari-row"><div class="nama-anak">${anak.nama}</div><div class="mingguan-status-group">`;
     hariList.forEach(h => {
+      html += `<div class="hari-grup"><span class="hari-label">${h.label}</span><div class="hari-tombol">`;
       const st = statusMingguan[anak.id][h.tanggal] || 'belum';
       ['hadir','izin','alpa','libur'].forEach(s => {
         const aktif = st === s;
-        const emoji = s === 'hadir' ? '✓' : s === 'izin' ? '📝' : s === 'alpa' ? '✗' : '🏖';
-        html += `<button onclick="setStatusMingguan('${anak.id}','${h.tanggal}','${s}')" class="status-pill ${aktif ? getStatusClass(s) : 'status-belum'}" title="${h.label}: ${getStatusLabel(s)}" style="padding:4px 7px;font-size:11px;">${emoji}${aktif ? '' : ''}</button>`;
+        const huruf = s === 'hadir' ? 'H' : s === 'izin' ? 'I' : s === 'alpa' ? 'A' : 'L';
+        html += `<button onclick="setStatusMingguan('${anak.id}','${h.tanggal}','${s}')" class="status-pill ${aktif ? getStatusClass(s) : 'status-belum'}" aria-pressed="${aktif}" title="${h.label}: ${getStatusLabel(s)}" aria-label="${anak.nama}, ${h.label}: ${getStatusLabel(s)}">${huruf}</button>`;
       });
+      html += `</div></div>`;
     });
     html += `</div></div>`;
   });
@@ -726,14 +728,14 @@ window.simpanSemuaMingguan = async function() {
   });
   if (entries.length === 0) { alert('Belum ada data yang diisi untuk minggu ini.'); return; }
   const btn = document.getElementById('btnSimpanMingguan');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan… (jangan klik lagi)'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Menyimpan… (jangan klik lagi)'; }
   const r = await api('saveMingguan', { password: guruPassword, entries });
-  if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Semua Data Minggu Ini'; }
+  if (btn) { btn.disabled = false; btn.textContent = 'Simpan semua data minggu ini'; }
   if (!r.ok) { alert('Gagal menyimpan: ' + (r.error||'') + '\n\nCatatan: kalau ini karena waktu habis, data BISA JADI tetap tersimpan di server walau pesannya gagal. Cek dulu di tab Riwayat sebelum mencoba simpan ulang, supaya tidak dobel.'); return; }
   localStorage.removeItem(buatDraftKeyMingguan(currentMingguInfo.bulan, currentMingguInfo.tahun, currentMingguInfo.mingguKe));
   await loadGuruData();
   showTab('mingguan');
-  alert(`✅ ${entries.length} data absen mingguan tersimpan!`);
+  alert(`${entries.length} data absen mingguan tersimpan!`);
 };
 
 function renderRiwayatMingguan() {
@@ -746,12 +748,12 @@ function renderRiwayatMingguan() {
   const tanggalList = Object.keys(grup).sort().reverse();
   if (tanggalList.length === 0) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:12px;text-align:center;">Belum ada riwayat kunjungan.</p>'; return; }
   container.innerHTML = tanggalList.map(tgl => `
-    <div style="padding:10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+    <div style="padding:10px;border-radius:4px;background:var(--well);border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
       <div>
         <div style="font-size:13px;font-weight:600;">${formatDateIndo(tgl)}</div>
-        <div style="font-size:11px;color:var(--accent);">✓ ${grup[tgl].length} data absen</div>
+        <div style="font-size:12px;color:var(--accent);">${grup[tgl].length} data absen</div>
       </div>
-      <button onclick="hapusKunjunganTanggal('${tgl}')" style="padding:4px 10px;border-radius:6px;background:var(--danger-soft);color:var(--danger);border:none;font-size:12px;">Hapus</button>
+      <button onclick="hapusKunjunganTanggal('${tgl}')" style="padding:4px 10px;border-radius:4px;background:var(--danger-soft);color:var(--danger);border:none;font-size:12px;">Hapus</button>
     </div>`).join('');
 }
 
@@ -806,7 +808,7 @@ function renderRekapMingguan() {
   html += '<th style="text-align:center;padding:8px;border-bottom:1px solid var(--border);">Total</th></tr></thead><tbody>';
 
   anakUrut.forEach(anak => {
-    html += `<tr><td style="padding:8px;border-bottom:1px solid var(--border);font-weight:500;">${anak.nama}</td><td style="padding:8px;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted);">${anak.tempatPkl||'-'}</td>`;
+    html += `<tr><td style="padding:8px;border-bottom:1px solid var(--border);font-weight:500;">${anak.nama}</td><td style="padding:8px;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);">${anak.tempatPkl||'-'}</td>`;
     let tH=0,tI=0,tA=0,tL=0;
     weeks.forEach(w => {
       let absen = guruData.absensi.filter(a => { const d = new Date(a.tanggal); return a.anakId===anak.id && d>=w.start && d<=w.end && a.status !== 'pending'; });
@@ -820,7 +822,7 @@ function renderRekapMingguan() {
     });
     html += `<td style="text-align:center;padding:8px;border-bottom:1px solid var(--border);font-weight:600;"><span style="color:var(--success);">${tH}</span> <span style="color:var(--warning);">${tI}</span> <span style="color:var(--danger);">${tA}</span> <span style="color:var(--libur);">${tL}</span></td></tr>`;
   });
-  html += '</tbody></table><p style="font-size:11px;color:var(--muted);margin-top:8px;">Hijau=Hadir · Oranye=Izin · Merah=Alpa · Ungu=Libur</p>';
+  html += '</tbody></table><p style="font-size:12px;color:var(--muted);margin-top:8px;">Hijau=Hadir · Oranye=Izin · Merah=Alpa · Ungu=Libur</p>';
   container.innerHTML = html;
 }
 
@@ -841,19 +843,19 @@ function renderDetailRiwayat() {
   if (riwayat.length === 0) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:12px;text-align:center;">Tidak ada data</p>'; return; }
   container.innerHTML = riwayat.map(a => {
     const anak = cariAnak(a.anakId);
-    const iconSumber = a.sumber === 'mingguan' ? '🗓️' : a.sumber === 'manual' ? '✍️' : '📱';
+    const iconSumber = a.sumber === 'mingguan' ? 'Mingguan' : a.sumber === 'manual' ? 'Manual' : 'Siswa';
     const catatanAman = String(a.catatanGuru || '').replace(/"/g, '&quot;');
     return `
-      <div style="padding:8px 10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);">
+      <div style="padding:8px 10px;border-radius:4px;background:var(--well);border:1px solid var(--border);">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
           <div>
-            <div style="font-size:13px;font-weight:500;">${iconSumber} ${anak ? anak.nama : '-'}</div>
-            <div style="font-size:11px;color:var(--muted);">${formatDateIndo(a.tanggal)}${a.catatanGuru ? ' · ' + a.catatanGuru : ''}</div>
+            <div style="font-size:13px;font-weight:500;">${anak ? anak.nama : '-'} <span style="font-size:12px;font-weight:400;color:var(--muted);">· ${iconSumber}</span></div>
+            <div style="font-size:12px;color:var(--muted);">${formatDateIndo(a.tanggal)}${a.catatanGuru ? ' · ' + a.catatanGuru : ''}</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
-            <span class="${getStatusClass(a.status)}" style="padding:2px 10px;border-radius:12px;font-size:11px;font-weight:500;">${getStatusLabel(a.status)}</span>
-            <button onclick="toggleEditRiwayat('${a.id}')" title="Edit" style="padding:4px 8px;border-radius:6px;background:var(--info-soft);color:var(--info);border:none;font-size:12px;">✏️</button>
-            <button onclick="hapusRiwayatItem('${a.id}')" title="Hapus" style="padding:4px 8px;border-radius:6px;background:var(--danger-soft);color:var(--danger);border:none;font-size:12px;">🗑️</button>
+            <span class="${getStatusClass(a.status)}" style="padding:2px 10px;border-radius:4px;font-size:12px;font-weight:500;">${getStatusLabel(a.status)}</span>
+            <button onclick="toggleEditRiwayat('${a.id}')" title="Edit" style="padding:6px 10px;border-radius:4px;background:var(--info-soft);color:var(--info);border:1px solid var(--line-strong);font-size:12px;font-weight:600;">Ubah</button>
+            <button onclick="hapusRiwayatItem('${a.id}')" title="Hapus" style="padding:6px 10px;border-radius:4px;background:var(--danger-soft);color:var(--danger);border:1px solid var(--danger);font-size:12px;font-weight:600;">Hapus</button>
           </div>
         </div>
         <div id="editPanel_${a.id}" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);flex-direction:column;gap:8px;">
@@ -904,9 +906,9 @@ function renderDaftarAnak() {
   let html = ''; let lastTempat = '';
   anakUrut.forEach(anak => {
     const tempat = anak.tempatPkl || 'Tidak diketahui';
-    if (tempat !== lastTempat) { html += `<div class="tempat-pkl-group">📍 ${tempat}</div>`; lastTempat = tempat; }
+    if (tempat !== lastTempat) { html += `<div class="tempat-pkl-group">${tempat}</div>`; lastTempat = tempat; }
     html += `
-      <div style="padding:12px;border-radius:10px;background:var(--bg);border:1px solid var(--border);">
+      <div style="padding:12px;border-radius:4px;background:var(--well);border:1px solid var(--border);">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
           <div style="flex:1;min-width:200px;">
             <div style="font-weight:600;font-size:15px;">${anak.nama}</div>
@@ -915,8 +917,8 @@ function renderDaftarAnak() {
             <div style="font-size:12px;color:var(--accent);margin-top:2px;">PIN: <strong>${anak.pin}</strong></div>
           </div>
           <div style="display:flex;gap:6px;">
-            <button onclick='editAnak(${JSON.stringify(anak.id)})' style="padding:6px 12px;border-radius:6px;background:var(--accent-soft);color:var(--accent);border:none;font-size:12px;">Edit</button>
-            <button onclick='hapusAnak(${JSON.stringify(anak.id)})' style="padding:6px 12px;border-radius:6px;background:var(--danger-soft);color:var(--danger);border:none;font-size:12px;">Hapus</button>
+            <button onclick='editAnak(${JSON.stringify(anak.id)})' style="padding:6px 12px;border-radius:4px;background:var(--accent-soft);color:var(--accent);border:none;font-size:12px;">Edit</button>
+            <button onclick='hapusAnak(${JSON.stringify(anak.id)})' style="padding:6px 12px;border-radius:4px;background:var(--danger-soft);color:var(--danger);border:none;font-size:12px;">Hapus</button>
           </div>
         </div>
       </div>`;
@@ -995,9 +997,9 @@ window.prosesBulkInput = async function() {
   const berhasil = semuaHasil.filter(x => x.status === 'ok');
   const gagal = semuaHasil.filter(x => x.status !== 'ok');
   document.getElementById('bulkResult').innerHTML = `
-    <p style="color:var(--accent);">✅ Berhasil: ${berhasil.length}</p>
-    ${berhasil.length ? '<div style="font-family:monospace;font-size:11px;background:var(--bg);padding:8px;border-radius:6px;margin-top:6px;">' + berhasil.map(b => `${b.nama}: PIN ${b.pin}`).join('<br>') + '</div>' : ''}
-    ${gagal.length ? `<p style="color:var(--danger);margin-top:6px;">❌ Gagal (nama/tempat kosong atau duplikat): ${gagal.map(g=>g.nama).join(', ')}</p>` : ''}
+    <p style="color:var(--accent);">Berhasil: ${berhasil.length}</p>
+    ${berhasil.length ? '<div style="font-family:monospace;font-size:12px;background:var(--well);padding:8px;border-radius:4px;margin-top:6px;">' + berhasil.map(b => `${b.nama}: PIN ${b.pin}`).join('<br>') + '</div>' : ''}
+    ${gagal.length ? `<p style="color:var(--danger);margin-top:6px;">Gagal (nama/tempat kosong atau duplikat): ${gagal.map(g=>g.nama).join(', ')}</p>` : ''}
   `;
   if (berhasil.length > 0) document.getElementById('bulkInput').value = '';
   await loadGuruData();
@@ -1046,7 +1048,7 @@ window.prosesImportLama = async function() {
       totalAbsensi += r.jumlahAbsensi;
     }
 
-    resultEl.innerHTML = `<span style="color:var(--accent);">✅ Berhasil import ${totalAnak} anak baru dan ${totalAbsensi} riwayat absen.</span>`;
+    resultEl.innerHTML = `<span style="color:var(--accent);">Berhasil import ${totalAnak} anak baru dan ${totalAbsensi} riwayat absen.</span>`;
     await loadGuruData();
     showTab('anak');
   } catch (e) {
@@ -1063,13 +1065,13 @@ window.gantiPasswordGuru = async function() {
   msgEl.style.display = 'block';
   if (r.ok) {
     msgEl.style.color = 'var(--success)';
-    msgEl.textContent = '✅ Password berhasil diganti.';
+    msgEl.textContent = 'Password berhasil diganti.';
     guruPassword = pwBaru;
     document.getElementById('pwLama').value = '';
     document.getElementById('pwBaru').value = '';
   } else {
     msgEl.style.color = 'var(--danger)';
-    msgEl.textContent = '❌ ' + (r.error || 'Gagal mengganti password.');
+    msgEl.textContent = '' + (r.error || 'Gagal mengganti password.');
   }
 };
 
@@ -1081,12 +1083,12 @@ window.gantiKodeAksesGuru = async function() {
   msgEl.style.display = 'block';
   if (r.ok) {
     msgEl.style.color = 'var(--success)';
-    msgEl.textContent = '✅ Kode akses berhasil diganti. Sampaikan kode baru ini ke siswa.';
+    msgEl.textContent = 'Kode akses berhasil diganti. Sampaikan kode baru ini ke siswa.';
     document.getElementById('pwGuruUtkKode').value = '';
     document.getElementById('kodeAksesBaru').value = '';
   } else {
     msgEl.style.color = 'var(--danger)';
-    msgEl.textContent = '❌ ' + (r.error || 'Gagal mengganti kode akses.');
+    msgEl.textContent = '' + (r.error || 'Gagal mengganti kode akses.');
   }
 };
 
@@ -1098,11 +1100,11 @@ window.perbaikiUrlFotoLama = async function() {
   const r = await api('perbaikiUrlFoto', { password: guruPassword });
   if (r.ok) {
     msgEl.style.color = 'var(--success)';
-    msgEl.textContent = `✅ ${r.jumlah} foto lama berhasil diperbaiki.`;
+    msgEl.textContent = `${r.jumlah} foto lama berhasil diperbaiki.`;
     await loadGuruData();
   } else {
     msgEl.style.color = 'var(--danger)';
-    msgEl.textContent = '❌ ' + (r.error || 'Gagal memperbaiki.');
+    msgEl.textContent = '' + (r.error || 'Gagal memperbaiki.');
   }
 };
 
